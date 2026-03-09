@@ -251,7 +251,7 @@ input:focus { border-color: var(--blue); }
 .scoring-section { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
 .score-panel {
   background: var(--bg-card); border: 1px solid var(--bg-surface);
-  border-radius: 12px; padding: 16px; min-width: 280px; flex: 1; max-width: 400px;
+  border-radius: 12px; padding: 16px; min-width: 320px; flex: 1; max-width: 440px;
 }
 .score-panel h3 {
   font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;
@@ -270,6 +270,26 @@ input:focus { border-color: var(--blue); }
 .score-row.zero-pick { background: rgba(230,57,70,0.15); outline: 1px dashed var(--red); cursor: pointer; }
 .score-row.zero-pick:hover { background: rgba(230,57,70,0.25); }
 .score-category { font-size: 0.85rem; flex: 1; }
+.score-bonus-condition {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 0.7rem; color: var(--text-muted); white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+}
+.color-sq {
+  display: inline-block; width: 14px; height: 14px; border-radius: 3px;
+  vertical-align: middle; flex-shrink: 0;
+}
+.color-sq.red { background: var(--red); }
+.color-sq.yellow { background: var(--yellow); }
+.color-sq.green { background: var(--green); }
+.color-sq.blue { background: var(--blue); }
+.color-sq.purple { background: var(--purple); }
+.bonus-x { color: var(--gold); font-weight: 600; }
+.bonus-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 3px; font-size: 0.6rem;
+  font-weight: 700; border: 1px solid var(--text-muted); flex-shrink: 0;
+}
 .score-value {
   font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
   min-width: 36px; text-align: right;
@@ -472,23 +492,13 @@ input:focus { border-color: var(--blue); }
         <!-- Foredeck -->
         <div class="score-panel" id="foredeck-panel">
           <h3 id="foredeck-title">Foredeck</h3>
-          <div class="score-row" data-cat="ones"><span class="score-category">Ones</span><span class="score-value" id="sc-ones">—</span></div>
-          <div class="score-row" data-cat="twos"><span class="score-category">Twos</span><span class="score-value" id="sc-twos">—</span></div>
-          <div class="score-row" data-cat="threes"><span class="score-category">Threes</span><span class="score-value" id="sc-threes">—</span></div>
-          <div class="score-row" data-cat="fours"><span class="score-category">Fours</span><span class="score-value" id="sc-fours">—</span></div>
-          <div class="score-row" data-cat="fives"><span class="score-category">Fives</span><span class="score-value" id="sc-fives">—</span></div>
-          <div class="score-row" data-cat="sixes"><span class="score-category">Sixes</span><span class="score-value" id="sc-sixes">—</span></div>
+          <div id="foredeck-rows"></div>
           <div class="score-row score-bonus-row"><span class="score-category">Foredeck Bonus</span><span class="score-value" id="sc-foredeck-bonus">—</span></div>
         </div>
         <!-- Cockpit -->
         <div class="score-panel" id="cockpit-panel">
           <h3 id="cockpit-title">Cockpit</h3>
-          <div class="score-row" data-cat="blackjack"><span class="score-category">Blackjack (=21)</span><span class="score-value" id="sc-blackjack">—</span></div>
-          <div class="score-row" data-cat="chance"><span class="score-category">Chance</span><span class="score-value" id="sc-chance">—</span></div>
-          <div class="score-row" data-cat="twoPair"><span class="score-category">Two Pair</span><span class="score-value" id="sc-twoPair">—</span></div>
-          <div class="score-row" data-cat="fullHouse"><span class="score-category">Full House</span><span class="score-value" id="sc-fullHouse">—</span></div>
-          <div class="score-row" data-cat="allOdd"><span class="score-category">All Odd</span><span class="score-value" id="sc-allOdd">—</span></div>
-          <div class="score-row" data-cat="allEven"><span class="score-category">All Even</span><span class="score-value" id="sc-allEven">—</span></div>
+          <div id="cockpit-rows"></div>
         </div>
         <!-- Stern (color chart) -->
         <div class="color-chart-panel">
@@ -846,6 +856,7 @@ function renderScorecard() {
   const isMe = pid === myPlayerId;
   const turn = gameState.turn;
   const inScoring = isMe && isMyTurn() && turn?.phase === 'scoring';
+  const pColor = playerColor(pid);
 
   document.getElementById('foredeck-title').textContent = isMe ? 'Foredeck' : `${gameState.players[pid]?.name}'s Foredeck`;
   document.getElementById('cockpit-title').textContent = isMe ? 'Cockpit' : `${gameState.players[pid]?.name}'s Cockpit`;
@@ -853,22 +864,47 @@ function renderScorecard() {
   const diceVals = isMyTurn() && turn?.rollNumber > 0 ? getDiceValues() : null;
   const canPlayAnyCat = diceVals ? getQualifyingCategories(diceVals, pid).length > 0 : false;
 
-  // Foredeck
+  // Build Foredeck rows
+  const fdContainer = document.getElementById('foredeck-rows');
+  let fdHtml = '';
+  const fdNames = { ones:'1s', twos:'2s', threes:'3s', fours:'4s', fives:'5s', sixes:'6s' };
+  FOREDECK_CATS.forEach(cat => {
+    const num = CAT_NUM_MAP[cat];
+    const bonusHtml = buildForedeckBonusHtml(cat, num, pColor);
+    fdHtml += `<div class="score-row" data-cat="${cat}">
+      <span class="score-category">${fdNames[cat]}</span>
+      <span class="score-bonus-condition">${bonusHtml}</span>
+      <span class="score-value" id="sc-${cat}">—</span>
+    </div>`;
+  });
+  fdContainer.innerHTML = fdHtml;
+
+  // Build Cockpit rows
+  const cpContainer = document.getElementById('cockpit-rows');
+  let cpHtml = '';
+  const cpNames = { blackjack:'Blackjack', chance:'Chance', twoPair:'Two Pair', fullHouse:'Full House', allOdd:'All Odd', allEven:'All Even' };
+  COCKPIT_CATS.forEach(cat => {
+    const bonusHtml = buildCockpitBonusHtml(cat, pColor);
+    cpHtml += `<div class="score-row" data-cat="${cat}">
+      <span class="score-category">${cpNames[cat]}</span>
+      <span class="score-bonus-condition">${bonusHtml}</span>
+      <span class="score-value" id="sc-${cat}">—</span>
+    </div>`;
+  });
+  cpContainer.innerHTML = cpHtml;
+
+  // Now apply scores/interactivity
   FOREDECK_CATS.forEach(cat => {
     const row = document.querySelector(`.score-row[data-cat="${cat}"]`);
     const valEl = document.getElementById(`sc-${cat}`);
     if (!row || !valEl) return;
-    const scored = fd[cat];
-    renderCategoryRow(row, valEl, cat, scored, diceVals, inScoring, canPlayAnyCat, 'foredeck', pid);
+    renderCategoryRow(row, valEl, cat, fd[cat], diceVals, inScoring, canPlayAnyCat, 'foredeck', pid);
   });
-
-  // Cockpit
   COCKPIT_CATS.forEach(cat => {
     const row = document.querySelector(`.score-row[data-cat="${cat}"]`);
     const valEl = document.getElementById(`sc-${cat}`);
     if (!row || !valEl) return;
-    const scored = cp[cat];
-    renderCategoryRow(row, valEl, cat, scored, diceVals, inScoring, canPlayAnyCat, 'cockpit', pid);
+    renderCategoryRow(row, valEl, cat, cp[cat], diceVals, inScoring, canPlayAnyCat, 'cockpit', pid);
   });
 
   // Foredeck bonus
@@ -877,6 +913,35 @@ function renderScorecard() {
   if (fdSum >= 63) { bonusEl.textContent = '+35'; bonusEl.style.color = 'var(--gold)'; }
   else if (fdSum >= 55) { bonusEl.textContent = '+20'; bonusEl.style.color = 'var(--green)'; }
   else { bonusEl.textContent = `(${fdSum}/55)`; bonusEl.style.color = 'var(--text-muted)'; }
+}
+
+function buildForedeckBonusHtml(cat, num, pColor) {
+  // 1s/2s: If [playerColor] : X [num]
+  // 3s-6s: If [playerColor][secondColor] : X [num]
+  let html = 'If ';
+  html += `<span class="color-sq ${pColor}"></span>`;
+  if (cat !== 'ones' && cat !== 'twos') {
+    const offset = FOREDECK_PAIR_OFFSETS[cat];
+    const secondColor = getColorAtOffset(pColor, offset);
+    html += `<span class="color-sq ${secondColor}"></span>`;
+  }
+  html += ` <span class="bonus-x">: X</span> <span class="bonus-num">${num}</span>`;
+  return html;
+}
+
+function buildCockpitBonusHtml(cat, pColor) {
+  const offset = COCKPIT_BONUS_OFFSET[cat];
+  const bonusColor = getColorAtOffset(pColor, offset);
+  let condText = '';
+  switch(cat) {
+    case 'blackjack': condText = 'If ⚀'; break;
+    case 'chance': condText = 'If ≤13'; break;
+    case 'twoPair': condText = 'If ≤13'; break;
+    case 'fullHouse': condText = 'If ≤13'; break;
+    case 'allOdd': condText = 'If ≤13'; break;
+    case 'allEven': condText = 'If ≤18'; break;
+  }
+  return `${condText} <span class="bonus-x">: X</span> <span class="color-sq ${bonusColor}"></span>`;
 }
 
 function renderCategoryRow(row, valEl, cat, scored, diceVals, inScoring, canPlayAnyCat, section, pid) {
