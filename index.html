@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yacht Speed</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #E63946;
+  --yellow: #F4D35E;
+  --green: #2A9D8F;
+  --blue: #457B9D;
+  --purple: #7B2D8E;
+  --bg-dark: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-surface: #0F3460;
+  --text-primary: #F1FAEE;
+  --text-secondary: #A8DADC;
+  --text-muted: #6B7FA3;
+  --accent: #E63946;
+  --gold: #F4D35E;
+  --success: #2A9D8F;
+  --locked-glow: rgba(244, 211, 94, 0.4);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Fredoka', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.bg-pattern {
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(230,57,70,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(69,123,157,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(123,45,142,0.08) 0%, transparent 50%);
+  pointer-events: none; z-index: 0;
+}
+
+.hidden { display: none !important; }
+.screen { display: none; position: relative; z-index: 1; }
+.screen.active { display: flex; }
+
+/* ===== PASSWORD ===== */
+#password-screen {
+  min-height: 100vh; align-items: center; justify-content: center;
+  flex-direction: column; gap: 24px;
+}
+
+.logo-title {
+  font-size: 3.5rem; font-weight: 700; letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--red), var(--yellow), var(--green), var(--blue), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; text-align: center;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+.logo-subtitle {
+  color: var(--text-secondary); font-size: 1rem;
+  margin-top: -12px; letter-spacing: 4px; text-transform: uppercase;
+}
+
+.input-group { display: flex; flex-direction: column; gap: 8px; width: 320px; max-width: 90vw; }
+.input-group label {
+  font-size: 0.85rem; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 2px;
+}
+
+input[type="text"], input[type="password"] {
+  font-family: 'JetBrains Mono', monospace; font-size: 1rem;
+  padding: 12px 16px; background: var(--bg-card);
+  border: 2px solid var(--bg-surface); border-radius: 10px;
+  color: var(--text-primary); outline: none; transition: border-color 0.2s; width: 100%;
+}
+input:focus { border-color: var(--blue); }
+
+.btn {
+  font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600;
+  padding: 12px 32px; border: none; border-radius: 10px;
+  cursor: pointer; transition: all 0.2s; letter-spacing: 1px;
+}
+.btn-primary { background: linear-gradient(135deg, var(--blue), var(--purple)); color: white; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(69,123,157,0.4); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-accent { background: linear-gradient(135deg, var(--red), #c62828); color: white; }
+.btn-accent:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(230,57,70,0.4); }
+.btn-success { background: linear-gradient(135deg, var(--green), #1a7a6d); color: white; }
+.btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,157,143,0.4); }
+.btn-success:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-cancel { background: var(--bg-surface); color: var(--text-secondary); }
+.btn-sm { padding: 8px 20px; font-size: 0.85rem; }
+.error-msg { color: var(--red); font-size: 0.85rem; min-height: 20px; }
+
+/* ===== LOBBY ===== */
+#lobby-screen {
+  min-height: 100vh; flex-direction: column; align-items: center;
+  padding: 40px 20px; gap: 24px;
+}
+.lobby-card {
+  background: var(--bg-card); border: 1px solid var(--bg-surface);
+  border-radius: 16px; padding: 32px; width: 480px; max-width: 95vw;
+}
+.lobby-card h2 { font-size: 1.3rem; margin-bottom: 20px; color: var(--text-secondary); }
+
+.player-slots { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.player-slot {
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+  background: var(--bg-dark); border-radius: 10px;
+  border: 2px solid var(--bg-surface); min-height: 48px;
+}
+.player-slot.occupied { border-color: var(--green); background: rgba(42,157,143,0.08); }
+.player-slot.you { border-color: var(--gold); background: rgba(244,211,94,0.08); }
+.slot-number {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+  color: var(--text-muted); width: 20px; text-align: center;
+}
+.slot-name { flex: 1; font-weight: 500; }
+.slot-empty { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
+.slot-you-badge {
+  font-size: 0.7rem; background: var(--gold); color: var(--bg-dark);
+  padding: 2px 8px; border-radius: 6px; font-weight: 600;
+}
+.join-form { display: flex; gap: 10px; align-items: flex-end; }
+.join-form .input-group { flex: 1; }
+.lobby-status { text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+
+/* ===== GAME ===== */
+#game-screen { min-height: 100vh; flex-direction: column; }
+
+.game-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 24px; background: var(--bg-card);
+  border-bottom: 1px solid var(--bg-surface);
+}
+.game-header .logo-title { font-size: 1.5rem; }
+
+.abandon-btn {
+  font-family: 'Fredoka', sans-serif; font-size: 0.75rem; font-weight: 500;
+  padding: 6px 14px; background: transparent; border: 1px solid var(--red);
+  border-radius: 8px; color: var(--red); cursor: pointer; transition: all 0.2s;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.abandon-btn:hover { background: var(--red); color: white; }
+
+.round-info {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-secondary);
+}
+
+.turn-banner {
+  text-align: center; padding: 10px; font-weight: 600; font-size: 1.1rem;
+  background: rgba(69,123,157,0.15); border-bottom: 1px solid var(--bg-surface);
+}
+.turn-banner.your-turn { background: rgba(244,211,94,0.15); color: var(--gold); }
+
+.game-layout { display: flex; flex: 1; overflow: hidden; }
+
+/* Sidebar */
+.player-sidebar {
+  width: 200px; min-width: 200px; background: var(--bg-card);
+  border-right: 1px solid var(--bg-surface); padding: 16px; overflow-y: auto;
+}
+.sidebar-title {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--text-muted); margin-bottom: 12px;
+}
+.sidebar-player {
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 6px;
+  cursor: pointer; transition: all 0.15s; display: flex;
+  align-items: center; justify-content: space-between;
+}
+.sidebar-player:hover { background: var(--bg-surface); }
+.sidebar-player.active-turn { background: rgba(69,123,157,0.2); border-left: 3px solid var(--blue); }
+.sidebar-player.viewing { background: rgba(244,211,94,0.1); outline: 1px solid var(--gold); }
+.sidebar-player-name { font-size: 0.9rem; font-weight: 500; }
+.sidebar-player-score {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted);
+}
+.player-color-dot {
+  width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px;
+}
+
+/* Main */
+.game-main {
+  flex: 1; display: flex; flex-direction: column;
+  overflow-y: auto; padding: 20px; gap: 20px;
+}
+
+/* Dice */
+.dice-section { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.dice-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.die-container { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.die {
+  width: 64px; height: 64px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700;
+  cursor: default; transition: all 0.2s; position: relative;
+  border: 3px solid transparent;
+}
+.die.red { background: var(--red); color: white; }
+.die.yellow { background: var(--yellow); color: var(--bg-dark); }
+.die.green { background: var(--green); color: white; }
+.die.blue { background: var(--blue); color: white; }
+.die.purple { background: var(--purple); color: white; }
+.die.rainbow {
+  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+  color: var(--bg-dark); font-size: 1rem; text-align: center; line-height: 1.2;
+}
+.die.clickable { cursor: pointer; }
+.die.clickable:hover { transform: translateY(-4px); }
+.die.locked { border-color: var(--gold); box-shadow: 0 0 16px var(--locked-glow); }
+.die.locked::after {
+  content: '🔒'; position: absolute; top: -8px; right: -8px; font-size: 0.7rem;
+}
+.die-label {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted);
+}
+.die.rolling { animation: dieRoll 0.4s ease-in-out; }
+@keyframes dieRoll {
+  0% { transform: rotateX(0) scale(1); }
+  25% { transform: rotateX(90deg) scale(0.8); }
+  50% { transform: rotateX(180deg) scale(0.9); }
+  75% { transform: rotateX(270deg) scale(0.8); }
+  100% { transform: rotateX(360deg) scale(1); }
+}
+
+.roll-controls { display: flex; gap: 12px; align-items: center; }
+.roll-count {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-muted);
+}
+
+/* Phase */
+.phase-indicator {
+  display: flex; gap: 4px; align-items: center; justify-content: center; margin: 8px 0;
+}
+.phase-step {
+  padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
+  text-transform: uppercase; letter-spacing: 1px;
+  background: var(--bg-surface); color: var(--text-muted);
+}
+.phase-step.active { background: var(--blue); color: white; }
+.phase-step.completed { background: var(--green); color: white; }
+.phase-arrow { color: var(--text-muted); font-size: 0.7rem; }
+
+/* Score panels */
+.scoring-section { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+.score-panel {
+  background: var(--bg-card); border: 1px solid var(--bg-surface);
+  border-radius: 12px; padding: 16px; min-width: 280px; flex: 1; max-width: 400px;
+}
+.score-panel h3 {
+  font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--text-secondary); margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--bg-surface);
+}
+.score-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 10px; border-radius: 6px; transition: all 0.15s; gap: 8px;
+}
+.score-row:nth-child(even) { background: rgba(255,255,255,0.02); }
+.score-row.clickable { cursor: pointer; }
+.score-row.clickable:hover { background: rgba(69,123,157,0.15); }
+.score-row.used { opacity: 0.5; }
+.score-row.selected { background: rgba(42,157,143,0.2); outline: 1px solid var(--green); }
+.score-row.zero-pick { background: rgba(230,57,70,0.15); outline: 1px dashed var(--red); cursor: pointer; }
+.score-row.zero-pick:hover { background: rgba(230,57,70,0.25); }
+.score-category { font-size: 0.85rem; flex: 1; }
+.score-value {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+  min-width: 36px; text-align: right;
+}
+.score-value.potential { color: var(--gold); }
+.score-value.scored { color: var(--text-muted); }
+.score-value.zero { color: var(--red); opacity: 0.6; }
+.score-bonus-row {
+  border-top: 1px solid var(--bg-surface); margin-top: 8px; padding-top: 8px; font-weight: 600;
+}
+.bonus-indicator {
+  font-size: 0.65rem; color: var(--gold); margin-left: 4px;
+}
+
+/* Color chart */
+.color-chart-panel {
+  background: var(--bg-card); border: 1px solid var(--bg-surface);
+  border-radius: 12px; padding: 16px; width: 100%; max-width: 500px;
+}
+.color-chart-panel h3 {
+  font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--text-secondary); margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--bg-surface);
+}
+.color-chart { display: flex; flex-direction: column; gap: 6px; }
+.chart-header-row { display: flex; gap: 6px; padding-left: 72px; }
+.chart-header-cell {
+  width: 48px; text-align: center; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: var(--text-muted);
+}
+.chart-row { display: flex; align-items: center; gap: 6px; }
+.chart-row-label {
+  width: 66px; font-size: 0.75rem; text-transform: uppercase;
+  letter-spacing: 1px; text-align: right; padding-right: 6px;
+}
+.chart-cell {
+  width: 48px; height: 48px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600;
+  transition: all 0.15s; border: 2px solid transparent;
+}
+.chart-cell.empty { background: var(--bg-dark); border-color: var(--bg-surface); }
+.chart-cell.crossed { background: rgba(255,255,255,0.1); position: relative; }
+.chart-cell.crossed::after { content: '✕'; font-size: 1.4rem; color: var(--text-primary); }
+.chart-cell.clickable {
+  cursor: pointer; border-color: var(--gold);
+  animation: cellPulse 1.5s ease-in-out infinite;
+}
+.chart-cell.selected-cross { border-color: var(--green); background: rgba(42,157,143,0.2); }
+.chart-cell.selected-cross::after { content: '✕'; font-size: 1.4rem; color: var(--green); }
+@keyframes cellPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244,211,94,0.3); }
+  50% { box-shadow: 0 0 12px 2px rgba(244,211,94,0.3); }
+}
+.chart-row-score {
+  width: 40px; text-align: center; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--text-muted);
+}
+.chart-column-scores { display: flex; gap: 6px; padding-left: 72px; margin-top: 4px; }
+.chart-col-score {
+  width: 48px; text-align: center; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--text-muted);
+}
+
+.rainbow-info {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 8px 16px; background: rgba(244,211,94,0.1); border-radius: 8px;
+  margin-bottom: 12px; font-size: 0.85rem; color: var(--gold);
+}
+
+.bonus-crossoff-info {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 16px; background: rgba(42,157,143,0.15); border-radius: 8px;
+  margin-bottom: 12px; font-size: 0.9rem; color: var(--success); font-weight: 500;
+}
+
+.turn-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* Overlays */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+  display: none; align-items: center; justify-content: center; z-index: 100;
+}
+.overlay.visible { display: flex; }
+.overlay-card {
+  background: var(--bg-card); border-radius: 16px; padding: 40px;
+  text-align: center; max-width: 500px; width: 90vw;
+}
+.overlay-card.abandon { border: 2px solid var(--red); max-width: 400px; padding: 32px; }
+.overlay-card.gameover { border: 2px solid var(--gold); }
+.overlay-card h2 {
+  font-size: 2rem;
+  background: linear-gradient(135deg, var(--gold), var(--red));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 24px;
+}
+.overlay-card h3 { color: var(--red); margin-bottom: 12px; }
+.overlay-card p { color: var(--text-secondary); margin-bottom: 24px; font-size: 0.9rem; }
+.confirm-buttons { display: flex; gap: 12px; justify-content: center; }
+.final-scores { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.final-score-row {
+  display: flex; justify-content: space-between; padding: 8px 16px;
+  background: var(--bg-dark); border-radius: 8px;
+}
+.final-score-row.winner { background: rgba(244,211,94,0.15); border: 1px solid var(--gold); }
+.final-score-name { font-weight: 600; }
+.final-score-pts { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.final-score-breakdown { font-size: 0.75rem; color: var(--text-muted); }
+
+.fade-in { animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 768px) {
+  .logo-title { font-size: 2.2rem; }
+  .game-layout { flex-direction: column; }
+  .player-sidebar {
+    width: 100%; min-width: unset; flex-direction: row; display: flex;
+    gap: 8px; overflow-x: auto; padding: 10px;
+    border-right: none; border-bottom: 1px solid var(--bg-surface);
+  }
+  .sidebar-title { display: none; }
+  .sidebar-player { white-space: nowrap; margin-bottom: 0; }
+  .scoring-section { flex-direction: column; align-items: center; }
+  .die { width: 52px; height: 52px; font-size: 1.5rem; }
+  .chart-cell { width: 40px; height: 40px; }
+  .chart-header-row, .chart-column-scores { padding-left: 60px; }
+  .chart-row-label { width: 54px; font-size: 0.65rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+
+<!-- PASSWORD -->
+<div id="password-screen" class="screen active">
+  <div class="logo-title">Yacht Speed</div>
+  <div class="logo-subtitle">by Markee Games</div>
+  <div class="input-group">
+    <label>Enter Password</label>
+    <input type="password" id="password-input" placeholder="••••••••" autocomplete="off">
+  </div>
+  <div class="error-msg" id="password-error"></div>
+  <button class="btn btn-primary" onclick="checkPassword()">Enter</button>
+</div>
+
+<!-- LOBBY -->
+<div id="lobby-screen" class="screen">
+  <div class="logo-title" style="font-size:2.2rem;">Yacht Speed</div>
+  <div class="lobby-card">
+    <h2>Game Lobby</h2>
+    <div class="player-slots" id="player-slots"></div>
+    <div id="join-section">
+      <div class="join-form">
+        <div class="input-group">
+          <label>Your Name</label>
+          <input type="text" id="name-input" placeholder="Enter your name" maxlength="20" autocomplete="off">
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="joinGame()" style="margin-bottom:0;">Join</button>
+      </div>
+      <div class="error-msg" id="join-error" style="margin-top:8px;"></div>
+    </div>
+    <div id="joined-section" class="hidden" style="text-align:center;">
+      <p style="color:var(--success); margin-bottom:16px;">✓ You've joined the lobby</p>
+      <button class="btn btn-success" id="start-btn" onclick="startGame()" disabled>
+        Start Game
+      </button>
+    </div>
+  </div>
+  <div class="lobby-status" id="lobby-status">Waiting for players...</div>
+</div>
+
+<!-- GAME -->
+<div id="game-screen" class="screen">
+  <div class="game-header">
+    <div class="logo-title" style="font-size:1.3rem;">Yacht Speed</div>
+    <div class="round-info" id="round-info">Round 1 / 12</div>
+    <button class="abandon-btn" onclick="showAbandonConfirm()">Abandon Game</button>
+  </div>
+  <div class="turn-banner" id="turn-banner">Waiting...</div>
+  <div class="game-layout">
+    <div class="player-sidebar" id="player-sidebar"></div>
+    <div class="game-main">
+      <div class="dice-section">
+        <div class="dice-row" id="dice-row"></div>
+        <div class="roll-controls hidden" id="roll-controls">
+          <button class="btn btn-accent btn-sm" id="roll-btn" onclick="rollDice()">Roll Dice</button>
+          <span class="roll-count" id="roll-count">Roll 1 / 3</span>
+        </div>
+      </div>
+      <div class="phase-indicator hidden" id="phase-indicator">
+        <span class="phase-step" id="phase-roll">Roll</span>
+        <span class="phase-arrow">→</span>
+        <span class="phase-step" id="phase-score">Score</span>
+        <span class="phase-arrow">→</span>
+        <span class="phase-step" id="phase-bonus">Bonus</span>
+        <span class="phase-arrow">→</span>
+        <span class="phase-step" id="phase-color">Color Chart</span>
+      </div>
+      <div class="scoring-section" id="scoring-section">
+        <!-- Foredeck -->
+        <div class="score-panel" id="foredeck-panel">
+          <h3 id="foredeck-title">Foredeck</h3>
+          <div class="score-row" data-cat="ones"><span class="score-category">Ones</span><span class="score-value" id="sc-ones">—</span></div>
+          <div class="score-row" data-cat="twos"><span class="score-category">Twos</span><span class="score-value" id="sc-twos">—</span></div>
+          <div class="score-row" data-cat="threes"><span class="score-category">Threes</span><span class="score-value" id="sc-threes">—</span></div>
+          <div class="score-row" data-cat="fours"><span class="score-category">Fours</span><span class="score-value" id="sc-fours">—</span></div>
+          <div class="score-row" data-cat="fives"><span class="score-category">Fives</span><span class="score-value" id="sc-fives">—</span></div>
+          <div class="score-row" data-cat="sixes"><span class="score-category">Sixes</span><span class="score-value" id="sc-sixes">—</span></div>
+          <div class="score-row score-bonus-row"><span class="score-category">Foredeck Bonus</span><span class="score-value" id="sc-foredeck-bonus">—</span></div>
+        </div>
+        <!-- Cockpit -->
+        <div class="score-panel" id="cockpit-panel">
+          <h3 id="cockpit-title">Cockpit</h3>
+          <div class="score-row" data-cat="blackjack"><span class="score-category">Blackjack (=21)</span><span class="score-value" id="sc-blackjack">—</span></div>
+          <div class="score-row" data-cat="chance"><span class="score-category">Chance</span><span class="score-value" id="sc-chance">—</span></div>
+          <div class="score-row" data-cat="twoPair"><span class="score-category">Two Pair</span><span class="score-value" id="sc-twoPair">—</span></div>
+          <div class="score-row" data-cat="fullHouse"><span class="score-category">Full House</span><span class="score-value" id="sc-fullHouse">—</span></div>
+          <div class="score-row" data-cat="allOdd"><span class="score-category">All Odd</span><span class="score-value" id="sc-allOdd">—</span></div>
+          <div class="score-row" data-cat="allEven"><span class="score-category">All Even</span><span class="score-value" id="sc-allEven">—</span></div>
+        </div>
+        <!-- Stern (color chart) -->
+        <div class="color-chart-panel">
+          <h3>Stern</h3>
+          <div class="bonus-crossoff-info hidden" id="bonus-crossoff-info">
+            <span id="bonus-crossoff-text">Bonus: Cross off a space!</span>
+          </div>
+          <div class="rainbow-info hidden" id="rainbow-info">
+            <span id="rainbow-text"></span>
+          </div>
+          <div class="color-chart" id="color-chart"></div>
+          <div style="margin-top:12px; text-align:center;" id="color-actions">
+            <button class="btn btn-success btn-sm hidden" id="confirm-crossoff-btn" onclick="confirmCrossoff()">Confirm</button>
+            <button class="btn btn-sm hidden" id="skip-crossoff-btn" onclick="skipCrossoff()" style="background:var(--bg-surface); color:var(--text-secondary); margin-left:8px;">Skip</button>
+          </div>
+        </div>
+      </div>
+      <div class="turn-actions hidden" id="turn-actions">
+        <button class="btn btn-success" id="confirm-score-btn" onclick="confirmScore()" disabled>Confirm Score Selection</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Abandon -->
+<div class="overlay" id="abandon-confirm">
+  <div class="overlay-card abandon fade-in">
+    <h3>Abandon Game?</h3>
+    <p>This will end the current game for all players.</p>
+    <div class="confirm-buttons">
+      <button class="btn btn-sm btn-cancel" onclick="hideOverlay('abandon-confirm')">Cancel</button>
+      <button class="btn btn-sm btn-accent" onclick="abandonGame()">Abandon Game</button>
+    </div>
+  </div>
+</div>
+
+<!-- Game Over -->
+<div class="overlay" id="game-over">
+  <div class="overlay-card gameover fade-in">
+    <h2>Race Complete!</h2>
+    <div class="final-scores" id="final-scores"></div>
+    <button class="btn btn-primary" onclick="returnToLobby()">Return to Lobby</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// ==========================================
+// FIREBASE
+// ==========================================
+firebase.initializeApp({
+  apiKey: "AIzaSyDfmyncb46dDdxKZDmX1sq5GWypgNg1oZ0",
+  authDomain: "prismadice-7866d.firebaseapp.com",
+  databaseURL: "https://prismadice-7866d-default-rtdb.firebaseio.com",
+  projectId: "prismadice-7866d",
+  storageBucket: "prismadice-7866d.firebasestorage.app",
+  messagingSenderId: "1066439057806",
+  appId: "1:1066439057806:web:90600cfc17a2aeff0804df",
+  measurementId: "G-TESHF91V0V"
+});
+const db = firebase.database();
+const gameRef = db.ref('yachtspeed');
+
+// ==========================================
+// CONSTANTS
+// ==========================================
+const COLORS = ['red', 'yellow', 'green', 'blue', 'purple'];
+const FOREDECK_CATS = ['ones','twos','threes','fours','fives','sixes'];
+const COCKPIT_CATS = ['blackjack','chance','twoPair','fullHouse','allOdd','allEven'];
+const ALL_CATS = [...FOREDECK_CATS, ...COCKPIT_CATS];
+const CAT_NUM_MAP = { ones:1, twos:2, threes:3, fours:4, fives:5, sixes:6 };
+const RAINBOW_FACES = ['single','single','plusminus','double','doubleequal','circle'];
+
+// Foredeck: for 3s-6s, the offset of the second required color
+// 3s = +1, 4s = +2, 5s = +3, 6s = +4
+const FOREDECK_PAIR_OFFSETS = { threes:1, fours:2, fives:3, sixes:4 };
+
+// Cockpit bonus: color offset from player color
+const COCKPIT_BONUS_OFFSET = {
+  blackjack: 0, chance: 0, twoPair: 1, fullHouse: 2, allOdd: 3, allEven: 4
+};
+
+// ==========================================
+// HELPERS
+// ==========================================
+function showEl(id) { document.getElementById(id)?.classList.remove('hidden'); }
+function hideEl(id) { document.getElementById(id)?.classList.add('hidden'); }
+function showOverlay(id) { document.getElementById(id).classList.add('visible'); }
+function hideOverlay(id) { document.getElementById(id).classList.remove('visible'); }
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function getColorAtOffset(baseColor, offset) {
+  const idx = COLORS.indexOf(baseColor);
+  return COLORS[(idx + offset) % 5];
+}
+
+// ==========================================
+// STATE
+// ==========================================
+let myPlayerId = null;
+let myName = null;
+let gameState = null;
+let viewingPlayer = null;
+let selectedCategory = null;
+let selectedCrossoffs = [];
+
+function generateId() {
+  return 'p_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+}
+
+// ==========================================
+// PASSWORD
+// ==========================================
+document.getElementById('password-input').addEventListener('keypress', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+function checkPassword() {
+  if (document.getElementById('password-input').value === 'markeegames') {
+    showScreen('lobby-screen');
+    initLobby();
+  } else {
+    document.getElementById('password-error').textContent = 'Incorrect password.';
+  }
+}
+
+// ==========================================
+// LOBBY
+// ==========================================
+function initLobby() {
+  myPlayerId = generateId();
+  gameRef.on('value', snap => {
+    gameState = snap.val() || {};
+    if (gameState.status === 'playing') {
+      showScreen('game-screen');
+      renderGame();
+    } else {
+      renderLobby();
+    }
+  });
+  gameRef.child('players').child(myPlayerId).onDisconnect().remove();
+  document.getElementById('name-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') joinGame();
+  });
+}
+
+function renderLobby() {
+  const players = gameState.players || {};
+  const playerList = Object.entries(players);
+  const slotsDiv = document.getElementById('player-slots');
+  let html = '';
+  for (let i = 0; i < 5; i++) {
+    if (i < playerList.length) {
+      const [pid, pdata] = playerList[i];
+      const isMe = pid === myPlayerId;
+      html += `<div class="player-slot ${isMe ? 'you' : 'occupied'}">
+        <span class="slot-number">${i+1}</span>
+        <span class="slot-name">${pdata.name}</span>
+        ${isMe ? '<span class="slot-you-badge">YOU</span>' : ''}
+      </div>`;
+    } else {
+      html += `<div class="player-slot">
+        <span class="slot-number">${i+1}</span>
+        <span class="slot-name slot-empty">Waiting for player...</span>
+      </div>`;
+    }
+  }
+  slotsDiv.innerHTML = html;
+
+  const count = playerList.length;
+  document.getElementById('lobby-status').textContent =
+    count === 0 ? 'Waiting for players...' : `${count}/5 players — ready to start!`;
+  const startBtn = document.getElementById('start-btn');
+  if (startBtn) {
+    startBtn.disabled = count < 1;
+    startBtn.textContent = count < 1 ? 'Need at least 1 player' : 'Start Game!';
+  }
+  if (players[myPlayerId]) { hideEl('join-section'); showEl('joined-section'); }
+  if (count >= 5 && !players[myPlayerId]) {
+    document.getElementById('join-section').innerHTML = '<p style="color:var(--red);">Lobby is full (5/5)</p>';
+  }
+}
+
+function joinGame() {
+  const name = document.getElementById('name-input').value.trim();
+  const err = document.getElementById('join-error');
+  if (!name) { err.textContent = 'Please enter a name.'; return; }
+  if (name.length > 20) { err.textContent = 'Name must be 20 characters or less.'; return; }
+  const players = gameState.players || {};
+  if (Object.values(players).some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    err.textContent = 'That name is already taken.'; return;
+  }
+  if (Object.keys(players).length >= 5) { err.textContent = 'Lobby is full.'; return; }
+  if (gameState.status === 'playing') { err.textContent = 'Game in progress.'; return; }
+  myName = name;
+  err.textContent = '';
+  gameRef.child('players').child(myPlayerId).set({ name, connected: true });
+}
+
+function startGame() {
+  const players = gameState.players || {};
+  const playerIds = Object.keys(players);
+  if (playerIds.length < 1) return;
+
+  const shuffled = [...playerIds].sort(() => Math.random() - 0.5);
+  const colorPool = [...COLORS].sort(() => Math.random() - 0.5);
+
+  const initState = {
+    status: 'playing',
+    players: {},
+    turnOrder: shuffled,
+    currentTurnIndex: 0,
+    currentRound: 1,
+    turn: freshTurn(),
+    scores: {}
+  };
+
+  shuffled.forEach((pid, idx) => {
+    const color = colorPool[idx];
+    initState.players[pid] = { name: players[pid].name, order: idx, color };
+    initState.scores[pid] = {
+      foredeck: {},
+      cockpit: {},
+      colorChart: {
+        red: [false,false,false,false,false,false],
+        yellow: [false,false,false,false,false,false],
+        green: [false,false,false,false,false,false],
+        blue: [false,false,false,false,false,false],
+        purple: [false,false,false,false,false,false]
+      },
+      firstZero: { foredeck: false, cockpit: false }
+    };
+    FOREDECK_CATS.forEach(c => { initState.scores[pid].foredeck[c] = -1; });
+    COCKPIT_CATS.forEach(c => { initState.scores[pid].cockpit[c] = -1; });
+  });
+
+  gameRef.set(initState);
+}
+
+function freshTurn() {
+  return {
+    phase: 'rolling', rollNumber: 0,
+    dice: {
+      red: { value: 0, locked: false }, yellow: { value: 0, locked: false },
+      green: { value: 0, locked: false }, blue: { value: 0, locked: false },
+      purple: { value: 0, locked: false }
+    },
+    rainbow: { face: '', value: 0 },
+    pendingBonus: null
+  };
+}
+
+// ==========================================
+// GAME RENDERING
+// ==========================================
+function isMyTurn() { return gameState?.turnOrder?.[gameState.currentTurnIndex] === myPlayerId; }
+function currentPlayerId() { return gameState?.turnOrder?.[gameState.currentTurnIndex] || null; }
+function myColor() { return gameState?.players?.[myPlayerId]?.color || 'red'; }
+function playerColor(pid) { return gameState?.players?.[pid]?.color || 'red'; }
+
+function renderGame() {
+  if (!gameState || gameState.status !== 'playing') return;
+  if (!myName && gameState.players[myPlayerId]) myName = gameState.players[myPlayerId].name;
+  if (!viewingPlayer) viewingPlayer = myPlayerId;
+  renderHeader(); renderPlayerSidebar(); renderDice();
+  renderScorecard(); renderColorChart(); renderPhaseIndicator(); renderControls();
+  if (gameState.currentRound > 12) showGameOver();
+}
+
+function renderHeader() {
+  const round = Math.min(gameState.currentRound, 12);
+  document.getElementById('round-info').textContent = `Round ${round} / 12`;
+  const cpid = currentPlayerId();
+  const cname = gameState.players[cpid]?.name || '???';
+  const el = document.getElementById('turn-banner');
+  if (isMyTurn()) {
+    el.className = 'turn-banner your-turn';
+    const phase = gameState.turn?.phase || 'rolling';
+    if (phase === 'rolling') el.textContent = gameState.turn.rollNumber === 0 ? "Your turn! Roll the dice!" : "Lock dice and reroll, or keep your roll.";
+    else if (phase === 'scoring') el.textContent = 'Select a scoring category.';
+    else if (phase === 'bonus') el.textContent = 'Select a space to cross off (bonus).';
+    else if (phase === 'color') el.textContent = 'Cross off on the Stern (optional).';
+  } else { el.className = 'turn-banner'; el.textContent = `${cname}'s turn`; }
+}
+
+function renderPlayerSidebar() {
+  const sidebar = document.getElementById('player-sidebar');
+  let html = '<div class="sidebar-title">Players</div>';
+  gameState.turnOrder.forEach((pid, idx) => {
+    const p = gameState.players[pid]; if (!p) return;
+    const c = p.color;
+    html += `<div class="sidebar-player ${idx===gameState.currentTurnIndex?'active-turn':''} ${pid===viewingPlayer?'viewing':''}"
+      onclick="viewPlayerScorecard('${pid}')">
+      <span class="sidebar-player-name"><span class="player-color-dot" style="background:var(--${c})"></span>${p.name}${pid===myPlayerId?' (you)':''}</span>
+      <span class="sidebar-player-score">${calculateSpeed(pid)}</span>
+    </div>`;
+  });
+  sidebar.innerHTML = html;
+}
+
+function viewPlayerScorecard(pid) {
+  viewingPlayer = pid; renderScorecard(); renderColorChart(); renderPlayerSidebar();
+}
+
+function renderDice() {
+  const turn = gameState.turn; if (!turn) return;
+  const row = document.getElementById('dice-row');
+  let html = '';
+  COLORS.forEach(color => {
+    const d = turn.dice[color];
+    const canClick = isMyTurn() && turn.phase==='rolling' && turn.rollNumber>0 && turn.rollNumber<3;
+    html += `<div class="die-container">
+      <div class="die ${color} ${d.locked?'locked':''} ${canClick?'clickable':''}"
+        ${canClick ? `onclick="toggleLock('${color}')"` : ''}>
+        ${d.value>0 ? d.value : '?'}
+      </div><span class="die-label">${color}</span></div>`;
+  });
+  const rbw = turn.rainbow;
+  html += `<div class="die-container"><div class="die rainbow">${rbw.face ? getRainbowDisplay(rbw.face) : '?'}</div><span class="die-label">Rainbow</span></div>`;
+  row.innerHTML = html;
+}
+
+function getRainbowDisplay(face) {
+  switch(face) {
+    case 'single': return '🌈';
+    case 'plusminus': return '🌈±';
+    case 'double': return '🌈🌈';
+    case 'doubleequal': return '🌈🌈=';
+    case 'circle': return '⭕';
+    default: return '?';
+  }
+}
+
+function renderPhaseIndicator() {
+  const turn = gameState.turn;
+  if (!turn || turn.rollNumber === 0) { hideEl('phase-indicator'); return; }
+  showEl('phase-indicator');
+  const p = turn.phase;
+  const phases = ['rolling','scoring','bonus','color'];
+  const ids = ['phase-roll','phase-score','phase-bonus','phase-color'];
+  const current = phases.indexOf(p);
+  ids.forEach((id, i) => {
+    document.getElementById(id).className = 'phase-step' + (i===current ? ' active' : (i<current ? ' completed' : ''));
+  });
+}
+
+function renderScorecard() {
+  const pid = viewingPlayer;
+  if (!pid || !gameState.scores[pid]) return;
+  const fd = gameState.scores[pid].foredeck || {};
+  const cp = gameState.scores[pid].cockpit || {};
+  const isMe = pid === myPlayerId;
+  const turn = gameState.turn;
+  const inScoring = isMe && isMyTurn() && turn?.phase === 'scoring';
+
+  document.getElementById('foredeck-title').textContent = isMe ? 'Foredeck' : `${gameState.players[pid]?.name}'s Foredeck`;
+  document.getElementById('cockpit-title').textContent = isMe ? 'Cockpit' : `${gameState.players[pid]?.name}'s Cockpit`;
+
+  const diceVals = isMyTurn() && turn?.rollNumber > 0 ? getDiceValues() : null;
+  const canPlayAnyCat = diceVals ? getQualifyingCategories(diceVals, pid).length > 0 : false;
+
+  // Foredeck
+  FOREDECK_CATS.forEach(cat => {
+    const row = document.querySelector(`.score-row[data-cat="${cat}"]`);
+    const valEl = document.getElementById(`sc-${cat}`);
+    if (!row || !valEl) return;
+    const scored = fd[cat];
+    renderCategoryRow(row, valEl, cat, scored, diceVals, inScoring, canPlayAnyCat, 'foredeck', pid);
+  });
+
+  // Cockpit
+  COCKPIT_CATS.forEach(cat => {
+    const row = document.querySelector(`.score-row[data-cat="${cat}"]`);
+    const valEl = document.getElementById(`sc-${cat}`);
+    if (!row || !valEl) return;
+    const scored = cp[cat];
+    renderCategoryRow(row, valEl, cat, scored, diceVals, inScoring, canPlayAnyCat, 'cockpit', pid);
+  });
+
+  // Foredeck bonus
+  const fdSum = FOREDECK_CATS.reduce((s, c) => s + (fd[c] > 0 ? fd[c] : 0), 0);
+  const bonusEl = document.getElementById('sc-foredeck-bonus');
+  if (fdSum >= 63) { bonusEl.textContent = '+35'; bonusEl.style.color = 'var(--gold)'; }
+  else if (fdSum >= 55) { bonusEl.textContent = '+20'; bonusEl.style.color = 'var(--green)'; }
+  else { bonusEl.textContent = `(${fdSum}/55)`; bonusEl.style.color = 'var(--text-muted)'; }
+}
+
+function renderCategoryRow(row, valEl, cat, scored, diceVals, inScoring, canPlayAnyCat, section, pid) {
+  if (scored !== -1 && scored !== undefined && scored !== null) {
+    valEl.textContent = scored;
+    valEl.className = `score-value ${scored === 0 ? 'zero' : 'scored'}`;
+    row.className = 'score-row used';
+    row.onclick = null;
+  } else if (inScoring && diceVals) {
+    const potential = calculateCategoryScore(cat, diceVals);
+    // Category qualifies if score > 0 (or is Chance)
+    const qualifies = potential > 0 || cat === 'chance';
+
+    if (canPlayAnyCat) {
+      if (qualifies) {
+        valEl.textContent = potential;
+        valEl.className = 'score-value potential';
+        row.className = `score-row clickable ${selectedCategory===cat?'selected':''}`;
+        row.onclick = () => selectCategory(cat);
+      } else {
+        valEl.textContent = '0';
+        valEl.className = 'score-value';
+        row.className = 'score-row';
+        row.onclick = null;
+      }
+    } else {
+      // No qualifying categories — can pick any unused for a zero
+      valEl.textContent = '0';
+      valEl.className = 'score-value zero';
+      row.className = `score-row zero-pick ${selectedCategory===cat?'selected':''}`;
+      row.onclick = () => selectCategory(cat);
+    }
+  } else {
+    valEl.textContent = '—';
+    valEl.className = 'score-value';
+    row.className = 'score-row';
+    row.onclick = null;
+  }
+}
+
+function renderColorChart() {
+  const pid = viewingPlayer;
+  if (!pid || !gameState.scores[pid]) return;
+  const chart = gameState.scores[pid].colorChart || {};
+  const isMe = pid === myPlayerId;
+  const turn = gameState.turn;
+  const inBonusPhase = isMe && isMyTurn() && turn?.phase === 'bonus';
+  const inColorPhase = isMe && isMyTurn() && turn?.phase === 'color';
+
+  // Bonus crossoff info
+  if (inBonusPhase && turn.pendingBonus) {
+    showEl('bonus-crossoff-info');
+    document.getElementById('bonus-crossoff-text').textContent = getBonusCrossoffText(turn.pendingBonus);
+  } else {
+    hideEl('bonus-crossoff-info');
+  }
+
+  // Rainbow info
+  if (inColorPhase && turn.rainbow.face) {
+    showEl('rainbow-info');
+    document.getElementById('rainbow-text').textContent = getRainbowRuleText(turn.rainbow.face);
+  } else {
+    hideEl('rainbow-info');
+  }
+
+  const chartDiv = document.getElementById('color-chart');
+  let html = '<div class="chart-header-row">';
+  for (let n = 1; n <= 6; n++) html += `<div class="chart-header-cell">${n}</div>`;
+  html += '<div style="width:40px;"></div></div>';
+
+  COLORS.forEach(color => {
+    const row = chart[color] || [false,false,false,false,false,false];
+    html += `<div class="chart-row"><div class="chart-row-label" style="color:var(--${color})">${color}</div>`;
+    for (let n = 0; n < 6; n++) {
+      const crossed = row[n];
+      const isSel = selectedCrossoffs.some(c => c.color===color && c.number===n);
+      let cls = 'chart-cell';
+      if (crossed) cls += ' crossed';
+      else if (isSel) cls += ' empty selected-cross';
+      else if ((inBonusPhase || inColorPhase) && canSelectThisCrossoff(color, n, inBonusPhase)) cls += ' empty clickable';
+      else cls += ' empty';
+      const click = (inBonusPhase || inColorPhase) && !crossed ? `onclick="toggleCrossoff('${color}',${n})"` : '';
+      html += `<div class="${cls}" ${click}>${crossed ? '' : (n+1)}</div>`;
+    }
+    html += `<div class="chart-row-score">${calculateRowScore(row) || ''}</div></div>`;
+  });
+
+  html += '<div class="chart-column-scores">';
+  for (let n = 0; n < 6; n++) {
+    const colCount = COLORS.filter(c => (chart[c]||[])[n]).length;
+    html += `<div class="chart-col-score">${colCount>=5?'25':(colCount>=4?'10':'')}</div>`;
+  }
+  html += '<div style="width:40px;"></div></div>';
+  chartDiv.innerHTML = html;
+
+  if (inBonusPhase) {
+    showEl('skip-crossoff-btn');
+    if (selectedCrossoffs.length > 0) showEl('confirm-crossoff-btn'); else hideEl('confirm-crossoff-btn');
+  } else if (inColorPhase) {
+    showEl('skip-crossoff-btn');
+    if (selectedCrossoffs.length > 0) showEl('confirm-crossoff-btn'); else hideEl('confirm-crossoff-btn');
+  } else {
+    hideEl('confirm-crossoff-btn'); hideEl('skip-crossoff-btn');
+  }
+}
+
+function renderControls() {
+  const turn = gameState.turn; if (!turn) return;
+  const oldKeep = document.getElementById('keep-btn'); if (oldKeep) oldKeep.remove();
+
+  if (isMyTurn()) {
+    if (turn.phase === 'rolling') {
+      showEl('roll-controls'); hideEl('turn-actions');
+      const rollBtn = document.getElementById('roll-btn');
+      const rollCount = document.getElementById('roll-count');
+      if (turn.rollNumber === 0) {
+        rollBtn.textContent = 'Roll Dice!'; rollBtn.disabled = false;
+        rollCount.textContent = 'Roll 1 / 3';
+      } else if (turn.rollNumber < 3) {
+        rollBtn.textContent = 'Reroll'; rollBtn.disabled = false;
+        rollCount.textContent = `Roll ${turn.rollNumber} / 3`;
+        if (!document.getElementById('keep-btn'))
+          rollBtn.insertAdjacentHTML('afterend','<button class="btn btn-success btn-sm" id="keep-btn" onclick="keepDice()" style="margin-left:8px;">Keep & Score</button>');
+      } else { hideEl('roll-controls'); }
+    } else if (turn.phase === 'scoring') {
+      hideEl('roll-controls'); showEl('turn-actions');
+      document.getElementById('confirm-score-btn').disabled = !selectedCategory;
+    } else {
+      hideEl('roll-controls'); hideEl('turn-actions');
+    }
+  } else { hideEl('roll-controls'); hideEl('turn-actions'); }
+}
+
+// ==========================================
+// DICE
+// ==========================================
+function rollDie() { return Math.floor(Math.random()*6)+1; }
+function rollRainbowFace() { return RAINBOW_FACES[Math.floor(Math.random()*6)]; }
+
+function getDiceValues() {
+  const t = gameState.turn;
+  return COLORS.map(c => t.dice[c].value);
+}
+
+function getDiceMap() {
+  const t = gameState.turn;
+  const map = {};
+  COLORS.forEach(c => { map[c] = t.dice[c].value; });
+  return map;
+}
+
+function rollDice() {
+  if (!isMyTurn()) return;
+  const turn = gameState.turn;
+  const updates = {};
+  const isFirst = turn.rollNumber === 0;
+  COLORS.forEach(c => {
+    if (isFirst || !turn.dice[c].locked) {
+      updates[`turn/dice/${c}/value`] = rollDie();
+      updates[`turn/dice/${c}/locked`] = false;
+    }
+  });
+  updates['turn/rainbow/face'] = rollRainbowFace();
+  updates['turn/rollNumber'] = turn.rollNumber + 1;
+  if (turn.rollNumber + 1 >= 3) updates['turn/phase'] = 'scoring';
+  gameRef.update(updates);
+  setTimeout(() => {
+    document.querySelectorAll('.die').forEach(d => {
+      d.classList.add('rolling');
+      setTimeout(() => d.classList.remove('rolling'), 400);
+    });
+  }, 50);
+}
+
+function toggleLock(color) {
+  if (!isMyTurn()) return;
+  const turn = gameState.turn;
+  if (turn.phase !== 'rolling' || turn.rollNumber === 0) return;
+  gameRef.child(`turn/dice/${color}/locked`).set(!turn.dice[color].locked);
+}
+
+function keepDice() {
+  if (!isMyTurn()) return;
+  gameRef.child('turn/phase').set('scoring');
+}
+
+// ==========================================
+// SCORING LOGIC
+// ==========================================
+function calculateCategoryScore(cat, diceVals) {
+  const sum = diceVals.reduce((a,b) => a+b, 0);
+  const counts = {};
+  diceVals.forEach(v => { counts[v] = (counts[v]||0)+1; });
+
+  switch(cat) {
+    case 'ones': return diceVals.filter(v=>v===1).reduce((a,b)=>a+b,0);
+    case 'twos': return diceVals.filter(v=>v===2).reduce((a,b)=>a+b,0);
+    case 'threes': return diceVals.filter(v=>v===3).reduce((a,b)=>a+b,0);
+    case 'fours': return diceVals.filter(v=>v===4).reduce((a,b)=>a+b,0);
+    case 'fives': return diceVals.filter(v=>v===5).reduce((a,b)=>a+b,0);
+    case 'sixes': return diceVals.filter(v=>v===6).reduce((a,b)=>a+b,0);
+    case 'blackjack': return sum === 21 ? sum : 0;
+    case 'chance': return sum;
+    case 'twoPair': {
+      // Need exactly: 2 values with count=2, and 1 value with count=1
+      // No 4-of-a-kind, no 3-of-a-kind (that's full house territory)
+      const entries = Object.entries(counts);
+      const pairCount = entries.filter(([k,v]) => v === 2).length;
+      const singleCount = entries.filter(([k,v]) => v === 1).length;
+      if (pairCount === 2 && singleCount === 1) return sum;
+      return 0;
+    }
+    case 'fullHouse': {
+      const vals = Object.values(counts);
+      if (vals.includes(3) && vals.includes(2)) return sum;
+      return 0;
+    }
+    case 'allOdd': return diceVals.every(v=>v%2===1) ? sum : 0;
+    case 'allEven': return diceVals.every(v=>v%2===0) ? sum : 0;
+    default: return 0;
+  }
+}
+
+function getQualifyingCategories(diceVals, pid) {
+  const fd = gameState.scores[pid].foredeck || {};
+  const cp = gameState.scores[pid].cockpit || {};
+  const qualifying = [];
+  // Foredeck: qualifies only if score > 0
+  FOREDECK_CATS.forEach(cat => {
+    if (fd[cat] !== -1) return;
+    const score = calculateCategoryScore(cat, diceVals);
+    if (score > 0) qualifying.push(cat);
+  });
+  // Cockpit: qualifies if score > 0 (Chance always qualifies)
+  COCKPIT_CATS.forEach(cat => {
+    if (cp[cat] !== -1) return;
+    if (cat === 'chance') { qualifying.push(cat); return; }
+    const score = calculateCategoryScore(cat, diceVals);
+    if (score > 0) qualifying.push(cat);
+  });
+  return qualifying;
+}
+
+function selectCategory(cat) {
+  if (!isMyTurn() || gameState.turn?.phase !== 'scoring') return;
+  const section = FOREDECK_CATS.includes(cat) ? 'foredeck' : 'cockpit';
+  const scores = gameState.scores[myPlayerId][section] || {};
+  if (scores[cat] !== -1 && scores[cat] !== undefined) return;
+  selectedCategory = (selectedCategory === cat) ? null : cat;
+  renderScorecard(); renderControls();
+}
+
+function confirmScore() {
+  if (!isMyTurn() || !selectedCategory) return;
+  const turn = gameState.turn;
+  const diceVals = getDiceValues();
+  const diceMap = getDiceMap();
+  const section = FOREDECK_CATS.includes(selectedCategory) ? 'foredeck' : 'cockpit';
+  const qualifying = getQualifyingCategories(diceVals, myPlayerId);
+  const isZero = !qualifying.includes(selectedCategory);
+  const score = isZero ? 0 : calculateCategoryScore(selectedCategory, diceVals);
+
+  const updates = {};
+  updates[`scores/${myPlayerId}/${section}/${selectedCategory}`] = score;
+
+  // Determine bonus
+  const bonus = determineBonusCrossoff(selectedCategory, section, diceVals, diceMap, myPlayerId, isZero);
+  if (bonus) {
+    updates['turn/pendingBonus'] = bonus;
+    updates['turn/phase'] = 'bonus';
+  } else {
+    updates['turn/phase'] = 'color';
+  }
+
+  // Track first zero
+  if (isZero) {
+    const fz = gameState.scores[myPlayerId].firstZero || {};
+    if (!fz[section]) {
+      updates[`scores/${myPlayerId}/firstZero/${section}`] = true;
+    }
+  }
+
+  gameRef.update(updates);
+  selectedCategory = null;
+}
+
+function determineBonusCrossoff(cat, section, diceVals, diceMap, pid, isZero) {
+  const pColor = playerColor(pid);
+  const fz = gameState.scores[pid].firstZero || {};
+  const isFirstZero = isZero && !fz[section];
+
+  if (section === 'foredeck') {
+    const num = CAT_NUM_MAP[cat];
+    if (isZero && !isFirstZero) return null;
+
+    if (isFirstZero) {
+      // First zero: bonus regardless of dice
+      return { type: 'foredeck', column: num - 1, anyRow: true };
+    }
+
+    // Check foredeck bonus condition
+    if (cat === 'ones' || cat === 'twos') {
+      if (diceMap[pColor] === num) {
+        return { type: 'foredeck', column: num - 1, anyRow: true };
+      }
+    } else {
+      const offset = FOREDECK_PAIR_OFFSETS[cat];
+      const secondColor = getColorAtOffset(pColor, offset);
+      if (diceMap[pColor] === num && diceMap[secondColor] === num) {
+        return { type: 'foredeck', column: num - 1, anyRow: true };
+      }
+    }
+    return null;
+  }
+
+  if (section === 'cockpit') {
+    if (isZero && !isFirstZero) return null;
+    const offset = COCKPIT_BONUS_OFFSET[cat];
+    const bonusColor = getColorAtOffset(pColor, offset);
+
+    if (isFirstZero) {
+      return { type: 'cockpit', row: bonusColor, anyColumn: true };
+    }
+
+    // Check cockpit bonus conditions
+    const sum = diceVals.reduce((a,b) => a+b, 0);
+    let triggered = false;
+    switch(cat) {
+      case 'blackjack': triggered = diceVals.includes(1); break;
+      case 'chance': triggered = sum <= 13; break;
+      case 'twoPair': triggered = sum <= 13; break;
+      case 'fullHouse': triggered = sum <= 13; break;
+      case 'allOdd': triggered = sum <= 13; break;
+      case 'allEven': triggered = sum <= 18; break;
+    }
+    if (triggered) return { type: 'cockpit', row: bonusColor, anyColumn: true };
+    return null;
+  }
+  return null;
+}
+
+// ==========================================
+// COLOR CHART & CROSSOFF
+// ==========================================
+function canSelectThisCrossoff(color, number, isBonusPhase) {
+  if (!isMyTurn()) return false;
+  const chart = gameState.scores[myPlayerId].colorChart || {};
+  if ((chart[color]||[])[number]) return false;
+
+  if (isBonusPhase) {
+    const bonus = gameState.turn.pendingBonus;
+    if (!bonus) return false;
+    if (bonus.type === 'foredeck') return number === bonus.column;
+    if (bonus.type === 'cockpit') return color === bonus.row;
+    return false;
+  }
+
+  // Rainbow phase
+  return canSelectRainbowCrossoff(color, number);
+}
+
+function canSelectRainbowCrossoff(color, number) {
+  const turn = gameState.turn;
+  const face = turn.rainbow.face;
+  const diceMap = getDiceMap();
+  const diceVals = getDiceValues();
+
+  switch(face) {
+    case 'single':
+      if (selectedCrossoffs.length >= 1) return false;
+      return diceMap[color] === number + 1;
+
+    case 'plusminus': {
+      if (selectedCrossoffs.length >= 1) return false;
+      const maxVal = Math.max(...diceVals);
+      const minVal = Math.min(...diceVals);
+      // Must match color AND be the highest or lowest value
+      if (diceMap[color] !== number + 1) return false;
+      return diceMap[color] === maxVal || diceMap[color] === minVal;
+    }
+
+    case 'double':
+      if (selectedCrossoffs.length >= 2) return false;
+      return diceMap[color] === number + 1;
+
+    case 'doubleequal': {
+      if (selectedCrossoffs.length >= 2) return false;
+      if (diceMap[color] !== number + 1) return false;
+      if (selectedCrossoffs.length === 1) {
+        return selectedCrossoffs[0].number === number;
+      }
+      // First pick: check at least 2 dice show this number
+      const targetNum = number + 1;
+      const matchingColors = COLORS.filter(c => diceMap[c] === targetNum);
+      return matchingColors.length >= 2 && matchingColors.includes(color);
+    }
+
+    case 'circle':
+      return selectedCrossoffs.length < 1;
+
+    default: return false;
+  }
+}
+
+function toggleCrossoff(color, number) {
+  if (!isMyTurn()) return;
+  const chart = gameState.scores[myPlayerId].colorChart || {};
+  if ((chart[color]||[])[number]) return;
+
+  const idx = selectedCrossoffs.findIndex(c => c.color===color && c.number===number);
+  if (idx >= 0) { selectedCrossoffs.splice(idx, 1); }
+  else {
+    const isBonusPhase = gameState.turn.phase === 'bonus';
+    if (!canSelectThisCrossoff(color, number, isBonusPhase)) return;
+    // For bonus phase, only 1 crossoff
+    if (isBonusPhase) selectedCrossoffs = [{ color, number }];
+    else selectedCrossoffs.push({ color, number });
+  }
+  renderColorChart();
+}
+
+function confirmCrossoff() {
+  if (!isMyTurn() || selectedCrossoffs.length === 0) return;
+  const updates = {};
+  selectedCrossoffs.forEach(({color, number}) => {
+    updates[`scores/${myPlayerId}/colorChart/${color}/${number}`] = true;
+  });
+
+  if (gameState.turn.phase === 'bonus') {
+    updates['turn/pendingBonus'] = null;
+    updates['turn/phase'] = 'color';
+  } else {
+    // color phase done
+    selectedCrossoffs = [];
+    gameRef.update(updates);
+    endTurn();
+    return;
+  }
+  selectedCrossoffs = [];
+  gameRef.update(updates);
+}
+
+function skipCrossoff() {
+  if (!isMyTurn()) return;
+  selectedCrossoffs = [];
+  if (gameState.turn.phase === 'bonus') {
+    gameRef.update({ 'turn/pendingBonus': null, 'turn/phase': 'color' });
+  } else {
+    endTurn();
+  }
+}
+
+function getBonusCrossoffText(bonus) {
+  if (bonus.type === 'foredeck') return `Bonus! Cross off any ${bonus.column+1} on the chart.`;
+  if (bonus.type === 'cockpit') return `Bonus! Cross off any number in the ${bonus.row} row.`;
+  return 'Bonus crossoff!';
+}
+
+function getRainbowRuleText(face) {
+  switch(face) {
+    case 'single': return '🌈 Cross off 1 matching die (color + number)';
+    case 'plusminus': return '🌈± Cross off your highest OR lowest rolled die';
+    case 'double': return '🌈🌈 Cross off any 2 rolled dice (matching colors)';
+    case 'doubleequal': return '🌈🌈= Cross off 2 dice showing the same number (matching colors)';
+    case 'circle': return '⭕ Cross off ANY 1 space — wild!';
+    default: return '';
+  }
+}
+
+// ==========================================
+// TURNS
+// ==========================================
+function endTurn() {
+  let nextIndex = gameState.currentTurnIndex + 1;
+  let nextRound = gameState.currentRound;
+  if (nextIndex >= gameState.turnOrder.length) { nextIndex = 0; nextRound++; }
+  gameRef.update({
+    currentTurnIndex: nextIndex,
+    currentRound: nextRound,
+    turn: freshTurn()
+  });
+  viewingPlayer = myPlayerId;
+  selectedCategory = null;
+  selectedCrossoffs = [];
+}
+
+// ==========================================
+// SCORE CALCULATION
+// ==========================================
+function calculateRowScore(row) {
+  if (!row) return 0;
+  // Check 6 consecutive (complete row)
+  if (row.every(v => v)) return 40;
+  // Check 5 consecutive
+  for (let s = 0; s <= 1; s++) { if (row.slice(s, s+5).every(v => v)) return 25; }
+  // Check 4 consecutive
+  for (let s = 0; s <= 2; s++) { if (row.slice(s, s+4).every(v => v)) return 20; }
+  return 0;
+}
+
+function calculateColScore(chart, n) {
+  const count = COLORS.filter(c => (chart[c]||[])[n]).length;
+  if (count >= 5) return 25;
+  if (count >= 4) return 10;
+  return 0;
+}
+
+function calculateSternScore(pid) {
+  const chart = gameState.scores[pid].colorChart || {};
+  let total = 0;
+  COLORS.forEach(c => { total += calculateRowScore(chart[c] || []); });
+  for (let n = 0; n < 6; n++) total += calculateColScore(chart, n);
+  return total;
+}
+
+function calculateForedeckTotal(pid) {
+  const fd = gameState.scores[pid].foredeck || {};
+  let sum = 0;
+  FOREDECK_CATS.forEach(c => { if (fd[c] > 0) sum += fd[c]; });
+  let bonus = 0;
+  if (sum >= 63) bonus = 35;
+  else if (sum >= 55) bonus = 20;
+  return sum + bonus;
+}
+
+function calculateCockpitTotal(pid) {
+  const cp = gameState.scores[pid].cockpit || {};
+  let sum = 0;
+  COCKPIT_CATS.forEach(c => { if (cp[c] > 0) sum += cp[c]; });
+  return sum;
+}
+
+function calculateSpeed(pid) {
+  if (!gameState.scores[pid]) return 0;
+  return calculateForedeckTotal(pid) + calculateCockpitTotal(pid) + calculateSternScore(pid);
+}
+
+// ==========================================
+// GAME OVER & ABANDON
+// ==========================================
+function showGameOver() {
+  showOverlay('game-over');
+  const results = gameState.turnOrder.map(pid => ({
+    name: gameState.players[pid]?.name || '???',
+    speed: calculateSpeed(pid),
+    fd: calculateForedeckTotal(pid),
+    cp: calculateCockpitTotal(pid),
+    st: calculateSternScore(pid),
+    pid
+  })).sort((a,b) => b.speed - a.speed);
+
+  const top = results[0].speed;
+  document.getElementById('final-scores').innerHTML = results.map((r,i) => `
+    <div class="final-score-row ${r.speed===top?'winner':''}">
+      <div>
+        <span class="final-score-name">${i===0?'🏆 ':''}${r.name}${r.pid===myPlayerId?' (you)':''}</span>
+        <div class="final-score-breakdown">F:${r.fd} C:${r.cp} S:${r.st}</div>
+      </div>
+      <span class="final-score-pts">${r.speed} speed</span>
+    </div>
+  `).join('');
+}
+
+function showAbandonConfirm() { showOverlay('abandon-confirm'); }
+function abandonGame() { hideOverlay('abandon-confirm'); returnToLobby(); }
+function returnToLobby() {
+  gameRef.set({ status: 'lobby', players: {} });
+  hideOverlay('game-over');
+  showScreen('lobby-screen');
+  showEl('join-section'); hideEl('joined-section');
+  viewingPlayer = null; selectedCategory = null; selectedCrossoffs = [];
+}
+</script>
+</body>
+</html>
