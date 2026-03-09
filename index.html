@@ -52,7 +52,6 @@ body {
   min-height: 100vh; align-items: center; justify-content: center;
   flex-direction: column; gap: 24px;
 }
-
 .logo-title {
   font-size: 3.5rem; font-weight: 700; letter-spacing: 2px;
   background: linear-gradient(135deg, var(--red), var(--yellow), var(--green), var(--blue), var(--purple));
@@ -60,18 +59,15 @@ body {
   background-clip: text; text-align: center;
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
 }
-
 .logo-subtitle {
   color: var(--text-secondary); font-size: 1rem;
   margin-top: -12px; letter-spacing: 4px; text-transform: uppercase;
 }
-
 .input-group { display: flex; flex-direction: column; gap: 8px; width: 320px; max-width: 90vw; }
 .input-group label {
   font-size: 0.85rem; color: var(--text-muted);
   text-transform: uppercase; letter-spacing: 2px;
 }
-
 input[type="text"], input[type="password"] {
   font-family: 'JetBrains Mono', monospace; font-size: 1rem;
   padding: 12px 16px; background: var(--bg-card);
@@ -107,7 +103,6 @@ input:focus { border-color: var(--blue); }
   border-radius: 16px; padding: 32px; width: 480px; max-width: 95vw;
 }
 .lobby-card h2 { font-size: 1.3rem; margin-bottom: 20px; color: var(--text-secondary); }
-
 .player-slots { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
 .player-slot {
   display: flex; align-items: center; gap: 12px; padding: 10px 16px;
@@ -132,14 +127,12 @@ input:focus { border-color: var(--blue); }
 
 /* ===== GAME ===== */
 #game-screen { min-height: 100vh; flex-direction: column; }
-
 .game-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 24px; background: var(--bg-card);
   border-bottom: 1px solid var(--bg-surface);
 }
 .game-header .logo-title { font-size: 1.5rem; }
-
 .abandon-btn {
   font-family: 'Fredoka', sans-serif; font-size: 0.75rem; font-weight: 500;
   padding: 6px 14px; background: transparent; border: 1px solid var(--red);
@@ -147,17 +140,14 @@ input:focus { border-color: var(--blue); }
   letter-spacing: 1px; text-transform: uppercase;
 }
 .abandon-btn:hover { background: var(--red); color: white; }
-
 .round-info {
   font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-secondary);
 }
-
 .turn-banner {
   text-align: center; padding: 10px; font-weight: 600; font-size: 1.1rem;
   background: rgba(69,123,157,0.15); border-bottom: 1px solid var(--bg-surface);
 }
 .turn-banner.your-turn { background: rgba(244,211,94,0.15); color: var(--gold); }
-
 .game-layout { display: flex; flex: 1; overflow: hidden; }
 
 /* Sidebar */
@@ -228,7 +218,6 @@ input:focus { border-color: var(--blue); }
   75% { transform: rotateX(270deg) scale(0.8); }
   100% { transform: rotateX(360deg) scale(1); }
 }
-
 .roll-controls { display: flex; gap: 12px; align-items: center; }
 .roll-count {
   font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-muted);
@@ -269,11 +258,11 @@ input:focus { border-color: var(--blue); }
 .score-row.selected { background: rgba(42,157,143,0.2); outline: 1px solid var(--green); }
 .score-row.zero-pick { background: rgba(230,57,70,0.15); outline: 1px dashed var(--red); cursor: pointer; }
 .score-row.zero-pick:hover { background: rgba(230,57,70,0.25); }
-.score-category { font-size: 0.85rem; flex: 1; }
+.score-category { font-size: 0.85rem; flex-shrink: 0; }
 .score-bonus-condition {
-  display: flex; align-items: center; gap: 3px;
+  display: flex; align-items: center; gap: 3px; flex: 1; justify-content: flex-end;
   font-size: 0.7rem; color: var(--text-muted); white-space: nowrap;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono', monospace; margin-right: 8px;
 }
 .color-sq {
   display: inline-block; width: 14px; height: 14px; border-radius: 3px;
@@ -284,7 +273,7 @@ input:focus { border-color: var(--blue); }
 .color-sq.green { background: var(--green); }
 .color-sq.blue { background: var(--blue); }
 .color-sq.purple { background: var(--purple); }
-.bonus-x { color: var(--gold); font-weight: 600; }
+.bonus-arrow { color: var(--gold); font-weight: 600; margin: 0 2px; }
 .bonus-num {
   display: inline-flex; align-items: center; justify-content: center;
   width: 16px; height: 16px; border-radius: 3px; font-size: 0.6rem;
@@ -292,16 +281,13 @@ input:focus { border-color: var(--blue); }
 }
 .score-value {
   font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
-  min-width: 36px; text-align: right;
+  min-width: 36px; text-align: right; flex-shrink: 0;
 }
 .score-value.potential { color: var(--gold); }
 .score-value.scored { color: var(--text-muted); }
 .score-value.zero { color: var(--red); opacity: 0.6; }
 .score-bonus-row {
   border-top: 1px solid var(--bg-surface); margin-top: 8px; padding-top: 8px; font-weight: 600;
-}
-.bonus-indicator {
-  font-size: 0.65rem; color: var(--gold); margin-left: 4px;
 }
 
 /* Color chart */
@@ -353,20 +339,28 @@ input:focus { border-color: var(--blue); }
   width: 48px; text-align: center; font-family: 'JetBrains Mono', monospace;
   font-size: 0.8rem; color: var(--text-muted);
 }
-
 .rainbow-info {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   padding: 8px 16px; background: rgba(244,211,94,0.1); border-radius: 8px;
   margin-bottom: 12px; font-size: 0.85rem; color: var(--gold);
 }
-
 .bonus-crossoff-info {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   padding: 10px 16px; background: rgba(42,157,143,0.15); border-radius: 8px;
   margin-bottom: 12px; font-size: 0.9rem; color: var(--success); font-weight: 500;
 }
-
 .turn-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* Stern scoring legend */
+.stern-legend {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--bg-surface);
+}
+.stern-legend-item {
+  font-size: 0.7rem; color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.stern-legend-item span { color: var(--gold); }
 
 /* Overlays */
 .overlay {
@@ -390,14 +384,13 @@ input:focus { border-color: var(--blue); }
 .confirm-buttons { display: flex; gap: 12px; justify-content: center; }
 .final-scores { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
 .final-score-row {
-  display: flex; justify-content: space-between; padding: 8px 16px;
+  display: flex; justify-content: space-between; align-items: center; padding: 8px 16px;
   background: var(--bg-dark); border-radius: 8px;
 }
 .final-score-row.winner { background: rgba(244,211,94,0.15); border: 1px solid var(--gold); }
 .final-score-name { font-weight: 600; }
 .final-score-pts { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 .final-score-breakdown { font-size: 0.75rem; color: var(--text-muted); }
-
 .fade-in { animation: fadeIn 0.3s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -416,6 +409,8 @@ input:focus { border-color: var(--blue); }
   .chart-cell { width: 40px; height: 40px; }
   .chart-header-row, .chart-column-scores { padding-left: 60px; }
   .chart-row-label { width: 54px; font-size: 0.65rem; }
+  .score-bonus-condition { font-size: 0.6rem; }
+  .color-sq { width: 11px; height: 11px; }
 }
 </style>
 </head>
@@ -453,9 +448,7 @@ input:focus { border-color: var(--blue); }
     </div>
     <div id="joined-section" class="hidden" style="text-align:center;">
       <p style="color:var(--success); margin-bottom:16px;">✓ You've joined the lobby</p>
-      <button class="btn btn-success" id="start-btn" onclick="startGame()" disabled>
-        Start Game
-      </button>
+      <button class="btn btn-success" id="start-btn" onclick="startGame()" disabled>Start Game</button>
     </div>
   </div>
   <div class="lobby-status" id="lobby-status">Waiting for players...</div>
@@ -472,6 +465,7 @@ input:focus { border-color: var(--blue); }
   <div class="game-layout">
     <div class="player-sidebar" id="player-sidebar"></div>
     <div class="game-main">
+      <!-- Dice area -->
       <div class="dice-section">
         <div class="dice-row" id="dice-row"></div>
         <div class="roll-controls hidden" id="roll-controls">
@@ -479,6 +473,7 @@ input:focus { border-color: var(--blue); }
           <span class="roll-count" id="roll-count">Roll 1 / 3</span>
         </div>
       </div>
+      <!-- Phase indicator -->
       <div class="phase-indicator hidden" id="phase-indicator">
         <span class="phase-step" id="phase-roll">Roll</span>
         <span class="phase-arrow">→</span>
@@ -486,21 +481,22 @@ input:focus { border-color: var(--blue); }
         <span class="phase-arrow">→</span>
         <span class="phase-step" id="phase-bonus">Bonus</span>
         <span class="phase-arrow">→</span>
-        <span class="phase-step" id="phase-color">Color Chart</span>
+        <span class="phase-step" id="phase-color">Stern</span>
       </div>
+      <!-- Score panels + Stern -->
       <div class="scoring-section" id="scoring-section">
-        <!-- Foredeck -->
         <div class="score-panel" id="foredeck-panel">
           <h3 id="foredeck-title">Foredeck</h3>
           <div id="foredeck-rows"></div>
-          <div class="score-row score-bonus-row"><span class="score-category">Foredeck Bonus</span><span class="score-value" id="sc-foredeck-bonus">—</span></div>
+          <div class="score-row score-bonus-row">
+            <span class="score-category">Foredeck Bonus</span>
+            <span class="score-value" id="sc-foredeck-bonus">—</span>
+          </div>
         </div>
-        <!-- Cockpit -->
         <div class="score-panel" id="cockpit-panel">
           <h3 id="cockpit-title">Cockpit</h3>
           <div id="cockpit-rows"></div>
         </div>
-        <!-- Stern (color chart) -->
         <div class="color-chart-panel">
           <h3>Stern</h3>
           <div class="bonus-crossoff-info hidden" id="bonus-crossoff-info">
@@ -514,8 +510,13 @@ input:focus { border-color: var(--blue); }
             <button class="btn btn-success btn-sm hidden" id="confirm-crossoff-btn" onclick="confirmCrossoff()">Confirm</button>
             <button class="btn btn-sm hidden" id="skip-crossoff-btn" onclick="skipCrossoff()" style="background:var(--bg-surface); color:var(--text-secondary); margin-left:8px;">Skip</button>
           </div>
+          <div class="stern-legend">
+            <div class="stern-legend-item">Rows: <span>4-run=10</span> <span>5-run=25</span> <span>6-run=40</span></div>
+            <div class="stern-legend-item">Cols: <span>4/5=10</span> <span>5/5=25</span></div>
+          </div>
         </div>
       </div>
+      <!-- Confirm score button -->
       <div class="turn-actions hidden" id="turn-actions">
         <button class="btn btn-success" id="confirm-score-btn" onclick="confirmScore()" disabled>Confirm Score Selection</button>
       </div>
@@ -523,7 +524,7 @@ input:focus { border-color: var(--blue); }
   </div>
 </div>
 
-<!-- Abandon -->
+<!-- Abandon Overlay -->
 <div class="overlay" id="abandon-confirm">
   <div class="overlay-card abandon fade-in">
     <h3>Abandon Game?</h3>
@@ -535,7 +536,7 @@ input:focus { border-color: var(--blue); }
   </div>
 </div>
 
-<!-- Game Over -->
+<!-- Game Over Overlay -->
 <div class="overlay" id="game-over">
   <div class="overlay-card gameover fade-in">
     <h2>Race Complete!</h2>
@@ -544,6 +545,7 @@ input:focus { border-color: var(--blue); }
   </div>
 </div>
 
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -573,15 +575,10 @@ const COCKPIT_CATS = ['blackjack','chance','twoPair','fullHouse','allOdd','allEv
 const ALL_CATS = [...FOREDECK_CATS, ...COCKPIT_CATS];
 const CAT_NUM_MAP = { ones:1, twos:2, threes:3, fours:4, fives:5, sixes:6 };
 const RAINBOW_FACES = ['single','single','plusminus','double','doubleequal','circle'];
-
-// Foredeck: for 3s-6s, the offset of the second required color
-// 3s = +1, 4s = +2, 5s = +3, 6s = +4
 const FOREDECK_PAIR_OFFSETS = { threes:1, fours:2, fives:3, sixes:4 };
-
-// Cockpit bonus: color offset from player color
-const COCKPIT_BONUS_OFFSET = {
-  blackjack: 0, chance: 0, twoPair: 1, fullHouse: 2, allOdd: 3, allEven: 4
-};
+const COCKPIT_BONUS_OFFSET = { blackjack:0, chance:0, twoPair:1, fullHouse:2, allOdd:3, allEven:4 };
+const FD_NAMES = { ones:'All 1s', twos:'All 2s', threes:'All 3s', fours:'All 4s', fives:'All 5s', sixes:'All 6s' };
+const CP_NAMES = { blackjack:'Blackjack (=21)', chance:'Chance', twoPair:'Two Pair', fullHouse:'Full House', allOdd:'All Odd', allEven:'All Even' };
 
 // ==========================================
 // HELPERS
@@ -595,8 +592,7 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 function getColorAtOffset(baseColor, offset) {
-  const idx = COLORS.indexOf(baseColor);
-  return COLORS[(idx + offset) % 5];
+  return COLORS[(COLORS.indexOf(baseColor) + offset) % 5];
 }
 
 // ==========================================
@@ -721,7 +717,7 @@ function startGame() {
 
   shuffled.forEach((pid, idx) => {
     const color = colorPool[idx];
-    initState.players[pid] = { name: players[pid].name, order: idx, color };
+    initState.players[pid] = { name: players[pid].name, order: idx, color: color };
     initState.scores[pid] = {
       foredeck: {},
       cockpit: {},
@@ -743,10 +739,13 @@ function startGame() {
 
 function freshTurn() {
   return {
-    phase: 'rolling', rollNumber: 0,
+    phase: 'rolling',
+    rollNumber: 0,
     dice: {
-      red: { value: 0, locked: false }, yellow: { value: 0, locked: false },
-      green: { value: 0, locked: false }, blue: { value: 0, locked: false },
+      red: { value: 0, locked: false },
+      yellow: { value: 0, locked: false },
+      green: { value: 0, locked: false },
+      blue: { value: 0, locked: false },
       purple: { value: 0, locked: false }
     },
     rainbow: { face: '', value: 0 },
@@ -766,8 +765,15 @@ function renderGame() {
   if (!gameState || gameState.status !== 'playing') return;
   if (!myName && gameState.players[myPlayerId]) myName = gameState.players[myPlayerId].name;
   if (!viewingPlayer) viewingPlayer = myPlayerId;
-  renderHeader(); renderPlayerSidebar(); renderDice();
-  renderScorecard(); renderColorChart(); renderPhaseIndicator(); renderControls();
+
+  renderHeader();
+  renderPlayerSidebar();
+  renderDice();
+  renderScorecard();
+  renderColorChart();
+  renderPhaseIndicator();
+  renderControls();
+
   if (gameState.currentRound > 12) showGameOver();
 }
 
@@ -777,25 +783,37 @@ function renderHeader() {
   const cpid = currentPlayerId();
   const cname = gameState.players[cpid]?.name || '???';
   const el = document.getElementById('turn-banner');
+
   if (isMyTurn()) {
     el.className = 'turn-banner your-turn';
     const phase = gameState.turn?.phase || 'rolling';
-    if (phase === 'rolling') el.textContent = gameState.turn.rollNumber === 0 ? "Your turn! Roll the dice!" : "Lock dice and reroll, or keep your roll.";
-    else if (phase === 'scoring') el.textContent = 'Select a scoring category.';
-    else if (phase === 'bonus') el.textContent = 'Select a space to cross off (bonus).';
-    else if (phase === 'color') el.textContent = 'Cross off on the Stern (optional).';
-  } else { el.className = 'turn-banner'; el.textContent = `${cname}'s turn`; }
+    if (phase === 'rolling') {
+      el.textContent = gameState.turn.rollNumber === 0
+        ? "Your turn! Roll the dice!"
+        : "Lock dice and reroll, or keep your roll.";
+    } else if (phase === 'scoring') {
+      el.textContent = 'Select a scoring category.';
+    } else if (phase === 'bonus') {
+      el.textContent = 'Select a space to cross off (bonus).';
+    } else if (phase === 'color') {
+      el.textContent = 'Cross off on the Stern (optional).';
+    }
+  } else {
+    el.className = 'turn-banner';
+    el.textContent = `${cname}'s turn`;
+  }
 }
 
 function renderPlayerSidebar() {
   const sidebar = document.getElementById('player-sidebar');
   let html = '<div class="sidebar-title">Players</div>';
   gameState.turnOrder.forEach((pid, idx) => {
-    const p = gameState.players[pid]; if (!p) return;
+    const p = gameState.players[pid];
+    if (!p) return;
     const c = p.color;
-    html += `<div class="sidebar-player ${idx===gameState.currentTurnIndex?'active-turn':''} ${pid===viewingPlayer?'viewing':''}"
+    html += `<div class="sidebar-player ${idx === gameState.currentTurnIndex ? 'active-turn' : ''} ${pid === viewingPlayer ? 'viewing' : ''}"
       onclick="viewPlayerScorecard('${pid}')">
-      <span class="sidebar-player-name"><span class="player-color-dot" style="background:var(--${c})"></span>${p.name}${pid===myPlayerId?' (you)':''}</span>
+      <span class="sidebar-player-name"><span class="player-color-dot" style="background:var(--${c})"></span>${p.name}${pid === myPlayerId ? ' (you)' : ''}</span>
       <span class="sidebar-player-score">${calculateSpeed(pid)}</span>
     </div>`;
   });
@@ -803,29 +821,38 @@ function renderPlayerSidebar() {
 }
 
 function viewPlayerScorecard(pid) {
-  viewingPlayer = pid; renderScorecard(); renderColorChart(); renderPlayerSidebar();
+  viewingPlayer = pid;
+  renderScorecard();
+  renderColorChart();
+  renderPlayerSidebar();
 }
 
 function renderDice() {
-  const turn = gameState.turn; if (!turn) return;
+  const turn = gameState.turn;
+  if (!turn) return;
   const row = document.getElementById('dice-row');
   let html = '';
   COLORS.forEach(color => {
     const d = turn.dice[color];
-    const canClick = isMyTurn() && turn.phase==='rolling' && turn.rollNumber>0 && turn.rollNumber<3;
+    const canClick = isMyTurn() && turn.phase === 'rolling' && turn.rollNumber > 0 && turn.rollNumber < 3;
     html += `<div class="die-container">
-      <div class="die ${color} ${d.locked?'locked':''} ${canClick?'clickable':''}"
+      <div class="die ${color} ${d.locked ? 'locked' : ''} ${canClick ? 'clickable' : ''}"
         ${canClick ? `onclick="toggleLock('${color}')"` : ''}>
-        ${d.value>0 ? d.value : '?'}
-      </div><span class="die-label">${color}</span></div>`;
+        ${d.value > 0 ? d.value : '?'}
+      </div>
+      <span class="die-label">${color}</span>
+    </div>`;
   });
   const rbw = turn.rainbow;
-  html += `<div class="die-container"><div class="die rainbow">${rbw.face ? getRainbowDisplay(rbw.face) : '?'}</div><span class="die-label">Rainbow</span></div>`;
+  html += `<div class="die-container">
+    <div class="die rainbow">${rbw.face ? getRainbowDisplay(rbw.face) : '?'}</div>
+    <span class="die-label">Rainbow</span>
+  </div>`;
   row.innerHTML = html;
 }
 
 function getRainbowDisplay(face) {
-  switch(face) {
+  switch (face) {
     case 'single': return '🌈';
     case 'plusminus': return '🌈±';
     case 'double': return '🌈🌈';
@@ -839,15 +866,18 @@ function renderPhaseIndicator() {
   const turn = gameState.turn;
   if (!turn || turn.rollNumber === 0) { hideEl('phase-indicator'); return; }
   showEl('phase-indicator');
-  const p = turn.phase;
-  const phases = ['rolling','scoring','bonus','color'];
-  const ids = ['phase-roll','phase-score','phase-bonus','phase-color'];
-  const current = phases.indexOf(p);
+  const phases = ['rolling', 'scoring', 'bonus', 'color'];
+  const ids = ['phase-roll', 'phase-score', 'phase-bonus', 'phase-color'];
+  const current = phases.indexOf(turn.phase);
   ids.forEach((id, i) => {
-    document.getElementById(id).className = 'phase-step' + (i===current ? ' active' : (i<current ? ' completed' : ''));
+    document.getElementById(id).className = 'phase-step' +
+      (i === current ? ' active' : (i < current ? ' completed' : ''));
   });
 }
 
+// ==========================================
+// SCORECARD RENDERING
+// ==========================================
 function renderScorecard() {
   const pid = viewingPlayer;
   if (!pid || !gameState.scores[pid]) return;
@@ -858,56 +888,53 @@ function renderScorecard() {
   const inScoring = isMe && isMyTurn() && turn?.phase === 'scoring';
   const pColor = playerColor(pid);
 
-  document.getElementById('foredeck-title').textContent = isMe ? 'Foredeck' : `${gameState.players[pid]?.name}'s Foredeck`;
-  document.getElementById('cockpit-title').textContent = isMe ? 'Cockpit' : `${gameState.players[pid]?.name}'s Cockpit`;
+  const pName = gameState.players[pid]?.name || '';
+  document.getElementById('foredeck-title').textContent = isMe ? 'Foredeck' : `${pName}'s Foredeck`;
+  document.getElementById('cockpit-title').textContent = isMe ? 'Cockpit' : `${pName}'s Cockpit`;
 
   const diceVals = isMyTurn() && turn?.rollNumber > 0 ? getDiceValues() : null;
   const canPlayAnyCat = diceVals ? getQualifyingCategories(diceVals, pid).length > 0 : false;
 
-  // Build Foredeck rows
+  // Build Foredeck rows dynamically (includes bonus indicators)
   const fdContainer = document.getElementById('foredeck-rows');
   let fdHtml = '';
-  const fdNames = { ones:'1s', twos:'2s', threes:'3s', fours:'4s', fives:'5s', sixes:'6s' };
   FOREDECK_CATS.forEach(cat => {
     const num = CAT_NUM_MAP[cat];
-    const bonusHtml = buildForedeckBonusHtml(cat, num, pColor);
     fdHtml += `<div class="score-row" data-cat="${cat}">
-      <span class="score-category">${fdNames[cat]}</span>
-      <span class="score-bonus-condition">${bonusHtml}</span>
+      <span class="score-category">${FD_NAMES[cat]}</span>
+      <span class="score-bonus-condition">${buildForedeckBonusHtml(cat, num, pColor)}</span>
       <span class="score-value" id="sc-${cat}">—</span>
     </div>`;
   });
   fdContainer.innerHTML = fdHtml;
 
-  // Build Cockpit rows
+  // Build Cockpit rows dynamically
   const cpContainer = document.getElementById('cockpit-rows');
   let cpHtml = '';
-  const cpNames = { blackjack:'Blackjack', chance:'Chance', twoPair:'Two Pair', fullHouse:'Full House', allOdd:'All Odd', allEven:'All Even' };
   COCKPIT_CATS.forEach(cat => {
-    const bonusHtml = buildCockpitBonusHtml(cat, pColor);
     cpHtml += `<div class="score-row" data-cat="${cat}">
-      <span class="score-category">${cpNames[cat]}</span>
-      <span class="score-bonus-condition">${bonusHtml}</span>
+      <span class="score-category">${CP_NAMES[cat]}</span>
+      <span class="score-bonus-condition">${buildCockpitBonusHtml(cat, pColor)}</span>
       <span class="score-value" id="sc-${cat}">—</span>
     </div>`;
   });
   cpContainer.innerHTML = cpHtml;
 
-  // Now apply scores/interactivity
+  // Apply scores and interactivity to all rows
   FOREDECK_CATS.forEach(cat => {
     const row = document.querySelector(`.score-row[data-cat="${cat}"]`);
     const valEl = document.getElementById(`sc-${cat}`);
     if (!row || !valEl) return;
-    renderCategoryRow(row, valEl, cat, fd[cat], diceVals, inScoring, canPlayAnyCat, 'foredeck', pid);
+    applyCategoryRow(row, valEl, cat, fd[cat], diceVals, inScoring, canPlayAnyCat);
   });
   COCKPIT_CATS.forEach(cat => {
     const row = document.querySelector(`.score-row[data-cat="${cat}"]`);
     const valEl = document.getElementById(`sc-${cat}`);
     if (!row || !valEl) return;
-    renderCategoryRow(row, valEl, cat, cp[cat], diceVals, inScoring, canPlayAnyCat, 'cockpit', pid);
+    applyCategoryRow(row, valEl, cat, cp[cat], diceVals, inScoring, canPlayAnyCat);
   });
 
-  // Foredeck bonus
+  // Foredeck upper bonus display
   const fdSum = FOREDECK_CATS.reduce((s, c) => s + (fd[c] > 0 ? fd[c] : 0), 0);
   const bonusEl = document.getElementById('sc-foredeck-bonus');
   if (fdSum >= 63) { bonusEl.textContent = '+35'; bonusEl.style.color = 'var(--gold)'; }
@@ -916,16 +943,15 @@ function renderScorecard() {
 }
 
 function buildForedeckBonusHtml(cat, num, pColor) {
-  // 1s/2s: If [playerColor] : X [num]
-  // 3s-6s: If [playerColor][secondColor] : X [num]
-  let html = 'If ';
+  // Format: [colorSq] or [colorSq][colorSq] → X [numBox]
+  let html = '';
   html += `<span class="color-sq ${pColor}"></span>`;
   if (cat !== 'ones' && cat !== 'twos') {
     const offset = FOREDECK_PAIR_OFFSETS[cat];
     const secondColor = getColorAtOffset(pColor, offset);
     html += `<span class="color-sq ${secondColor}"></span>`;
   }
-  html += ` <span class="bonus-x">: X</span> <span class="bonus-num">${num}</span>`;
+  html += `<span class="bonus-arrow">→</span><span class="bonus-num">${num}</span>`;
   return html;
 }
 
@@ -933,48 +959,50 @@ function buildCockpitBonusHtml(cat, pColor) {
   const offset = COCKPIT_BONUS_OFFSET[cat];
   const bonusColor = getColorAtOffset(pColor, offset);
   let condText = '';
-  switch(cat) {
-    case 'blackjack': condText = 'If ⚀'; break;
-    case 'chance': condText = 'If ≤13'; break;
-    case 'twoPair': condText = 'If ≤13'; break;
-    case 'fullHouse': condText = 'If ≤13'; break;
-    case 'allOdd': condText = 'If ≤13'; break;
-    case 'allEven': condText = 'If ≤18'; break;
+  switch (cat) {
+    case 'blackjack': condText = 'has ⚀'; break;
+    case 'chance': condText = '≤13'; break;
+    case 'twoPair': condText = '≤13'; break;
+    case 'fullHouse': condText = '≤13'; break;
+    case 'allOdd': condText = '≤13'; break;
+    case 'allEven': condText = '≤18'; break;
   }
-  return `${condText} <span class="bonus-x">: X</span> <span class="color-sq ${bonusColor}"></span>`;
+  return `${condText}<span class="bonus-arrow">→</span><span class="color-sq ${bonusColor}"></span>`;
 }
 
-function renderCategoryRow(row, valEl, cat, scored, diceVals, inScoring, canPlayAnyCat, section, pid) {
+function applyCategoryRow(row, valEl, cat, scored, diceVals, inScoring, canPlayAnyCat) {
   if (scored !== -1 && scored !== undefined && scored !== null) {
+    // Already scored
     valEl.textContent = scored;
     valEl.className = `score-value ${scored === 0 ? 'zero' : 'scored'}`;
     row.className = 'score-row used';
     row.onclick = null;
   } else if (inScoring && diceVals) {
     const potential = calculateCategoryScore(cat, diceVals);
-    // Category qualifies if score > 0 (or is Chance)
     const qualifies = potential > 0 || cat === 'chance';
 
     if (canPlayAnyCat) {
       if (qualifies) {
         valEl.textContent = potential;
         valEl.className = 'score-value potential';
-        row.className = `score-row clickable ${selectedCategory===cat?'selected':''}`;
+        row.className = `score-row clickable ${selectedCategory === cat ? 'selected' : ''}`;
         row.onclick = () => selectCategory(cat);
       } else {
+        // Doesn't qualify — greyed out, not clickable
         valEl.textContent = '0';
         valEl.className = 'score-value';
         row.className = 'score-row';
         row.onclick = null;
       }
     } else {
-      // No qualifying categories — can pick any unused for a zero
+      // No qualifying categories anywhere — forced zero, pick any unused
       valEl.textContent = '0';
       valEl.className = 'score-value zero';
-      row.className = `score-row zero-pick ${selectedCategory===cat?'selected':''}`;
+      row.className = `score-row zero-pick ${selectedCategory === cat ? 'selected' : ''}`;
       row.onclick = () => selectCategory(cat);
     }
   } else {
+    // Not in scoring phase or not our turn
     valEl.textContent = '—';
     valEl.className = 'score-value';
     row.className = 'score-row';
@@ -982,6 +1010,9 @@ function renderCategoryRow(row, valEl, cat, scored, diceVals, inScoring, canPlay
   }
 }
 
+// ==========================================
+// COLOR CHART (STERN) RENDERING
+// ==========================================
 function renderColorChart() {
   const pid = viewingPlayer;
   if (!pid || !gameState.scores[pid]) return;
@@ -1007,79 +1038,106 @@ function renderColorChart() {
     hideEl('rainbow-info');
   }
 
+  // Build chart grid
   const chartDiv = document.getElementById('color-chart');
   let html = '<div class="chart-header-row">';
   for (let n = 1; n <= 6; n++) html += `<div class="chart-header-cell">${n}</div>`;
   html += '<div style="width:40px;"></div></div>';
 
   COLORS.forEach(color => {
-    const row = chart[color] || [false,false,false,false,false,false];
+    const row = chart[color] || [false, false, false, false, false, false];
     html += `<div class="chart-row"><div class="chart-row-label" style="color:var(--${color})">${color}</div>`;
     for (let n = 0; n < 6; n++) {
       const crossed = row[n];
-      const isSel = selectedCrossoffs.some(c => c.color===color && c.number===n);
+      const isSel = selectedCrossoffs.some(c => c.color === color && c.number === n);
       let cls = 'chart-cell';
-      if (crossed) cls += ' crossed';
-      else if (isSel) cls += ' empty selected-cross';
-      else if ((inBonusPhase || inColorPhase) && canSelectThisCrossoff(color, n, inBonusPhase)) cls += ' empty clickable';
-      else cls += ' empty';
-      const click = (inBonusPhase || inColorPhase) && !crossed ? `onclick="toggleCrossoff('${color}',${n})"` : '';
-      html += `<div class="${cls}" ${click}>${crossed ? '' : (n+1)}</div>`;
+      if (crossed) {
+        cls += ' crossed';
+      } else if (isSel) {
+        cls += ' empty selected-cross';
+      } else if ((inBonusPhase || inColorPhase) && canSelectThisCrossoff(color, n, inBonusPhase)) {
+        cls += ' empty clickable';
+      } else {
+        cls += ' empty';
+      }
+      const click = (inBonusPhase || inColorPhase) && !crossed
+        ? `onclick="toggleCrossoff('${color}',${n})"` : '';
+      html += `<div class="${cls}" ${click}>${crossed ? '' : (n + 1)}</div>`;
     }
-    html += `<div class="chart-row-score">${calculateRowScore(row) || ''}</div></div>`;
+    const rowScore = calculateRowScore(row);
+    html += `<div class="chart-row-score">${rowScore > 0 ? rowScore : ''}</div></div>`;
   });
 
+  // Column scores
   html += '<div class="chart-column-scores">';
   for (let n = 0; n < 6; n++) {
-    const colCount = COLORS.filter(c => (chart[c]||[])[n]).length;
-    html += `<div class="chart-col-score">${colCount>=5?'25':(colCount>=4?'10':'')}</div>`;
+    const colCount = COLORS.filter(c => (chart[c] || [])[n]).length;
+    const colScore = colCount >= 5 ? 25 : (colCount >= 4 ? 10 : 0);
+    html += `<div class="chart-col-score">${colScore > 0 ? colScore : ''}</div>`;
   }
   html += '<div style="width:40px;"></div></div>';
   chartDiv.innerHTML = html;
 
-  if (inBonusPhase) {
+  // Show/hide action buttons
+  if (inBonusPhase || inColorPhase) {
     showEl('skip-crossoff-btn');
-    if (selectedCrossoffs.length > 0) showEl('confirm-crossoff-btn'); else hideEl('confirm-crossoff-btn');
-  } else if (inColorPhase) {
-    showEl('skip-crossoff-btn');
-    if (selectedCrossoffs.length > 0) showEl('confirm-crossoff-btn'); else hideEl('confirm-crossoff-btn');
+    if (selectedCrossoffs.length > 0) showEl('confirm-crossoff-btn');
+    else hideEl('confirm-crossoff-btn');
   } else {
-    hideEl('confirm-crossoff-btn'); hideEl('skip-crossoff-btn');
+    hideEl('confirm-crossoff-btn');
+    hideEl('skip-crossoff-btn');
   }
 }
 
+// ==========================================
+// CONTROLS
+// ==========================================
 function renderControls() {
-  const turn = gameState.turn; if (!turn) return;
-  const oldKeep = document.getElementById('keep-btn'); if (oldKeep) oldKeep.remove();
+  const turn = gameState.turn;
+  if (!turn) return;
+  const oldKeep = document.getElementById('keep-btn');
+  if (oldKeep) oldKeep.remove();
 
   if (isMyTurn()) {
     if (turn.phase === 'rolling') {
-      showEl('roll-controls'); hideEl('turn-actions');
+      showEl('roll-controls');
+      hideEl('turn-actions');
       const rollBtn = document.getElementById('roll-btn');
       const rollCount = document.getElementById('roll-count');
       if (turn.rollNumber === 0) {
-        rollBtn.textContent = 'Roll Dice!'; rollBtn.disabled = false;
+        rollBtn.textContent = 'Roll Dice!';
+        rollBtn.disabled = false;
         rollCount.textContent = 'Roll 1 / 3';
       } else if (turn.rollNumber < 3) {
-        rollBtn.textContent = 'Reroll'; rollBtn.disabled = false;
+        rollBtn.textContent = 'Reroll';
+        rollBtn.disabled = false;
         rollCount.textContent = `Roll ${turn.rollNumber} / 3`;
-        if (!document.getElementById('keep-btn'))
-          rollBtn.insertAdjacentHTML('afterend','<button class="btn btn-success btn-sm" id="keep-btn" onclick="keepDice()" style="margin-left:8px;">Keep & Score</button>');
-      } else { hideEl('roll-controls'); }
+        if (!document.getElementById('keep-btn')) {
+          rollBtn.insertAdjacentHTML('afterend',
+            '<button class="btn btn-success btn-sm" id="keep-btn" onclick="keepDice()" style="margin-left:8px;">Keep & Score</button>');
+        }
+      } else {
+        hideEl('roll-controls');
+      }
     } else if (turn.phase === 'scoring') {
-      hideEl('roll-controls'); showEl('turn-actions');
+      hideEl('roll-controls');
+      showEl('turn-actions');
       document.getElementById('confirm-score-btn').disabled = !selectedCategory;
     } else {
-      hideEl('roll-controls'); hideEl('turn-actions');
+      hideEl('roll-controls');
+      hideEl('turn-actions');
     }
-  } else { hideEl('roll-controls'); hideEl('turn-actions'); }
+  } else {
+    hideEl('roll-controls');
+    hideEl('turn-actions');
+  }
 }
 
 // ==========================================
-// DICE
+// DICE LOGIC
 // ==========================================
-function rollDie() { return Math.floor(Math.random()*6)+1; }
-function rollRainbowFace() { return RAINBOW_FACES[Math.floor(Math.random()*6)]; }
+function rollDie() { return Math.floor(Math.random() * 6) + 1; }
+function rollRainbowFace() { return RAINBOW_FACES[Math.floor(Math.random() * 6)]; }
 
 function getDiceValues() {
   const t = gameState.turn;
@@ -1132,25 +1190,23 @@ function keepDice() {
 // SCORING LOGIC
 // ==========================================
 function calculateCategoryScore(cat, diceVals) {
-  const sum = diceVals.reduce((a,b) => a+b, 0);
+  const sum = diceVals.reduce((a, b) => a + b, 0);
   const counts = {};
-  diceVals.forEach(v => { counts[v] = (counts[v]||0)+1; });
+  diceVals.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
 
-  switch(cat) {
-    case 'ones': return diceVals.filter(v=>v===1).reduce((a,b)=>a+b,0);
-    case 'twos': return diceVals.filter(v=>v===2).reduce((a,b)=>a+b,0);
-    case 'threes': return diceVals.filter(v=>v===3).reduce((a,b)=>a+b,0);
-    case 'fours': return diceVals.filter(v=>v===4).reduce((a,b)=>a+b,0);
-    case 'fives': return diceVals.filter(v=>v===5).reduce((a,b)=>a+b,0);
-    case 'sixes': return diceVals.filter(v=>v===6).reduce((a,b)=>a+b,0);
+  switch (cat) {
+    case 'ones': return diceVals.filter(v => v === 1).reduce((a, b) => a + b, 0);
+    case 'twos': return diceVals.filter(v => v === 2).reduce((a, b) => a + b, 0);
+    case 'threes': return diceVals.filter(v => v === 3).reduce((a, b) => a + b, 0);
+    case 'fours': return diceVals.filter(v => v === 4).reduce((a, b) => a + b, 0);
+    case 'fives': return diceVals.filter(v => v === 5).reduce((a, b) => a + b, 0);
+    case 'sixes': return diceVals.filter(v => v === 6).reduce((a, b) => a + b, 0);
     case 'blackjack': return sum === 21 ? sum : 0;
     case 'chance': return sum;
     case 'twoPair': {
-      // Need exactly: 2 values with count=2, and 1 value with count=1
-      // No 4-of-a-kind, no 3-of-a-kind (that's full house territory)
-      const entries = Object.entries(counts);
-      const pairCount = entries.filter(([k,v]) => v === 2).length;
-      const singleCount = entries.filter(([k,v]) => v === 1).length;
+      // Exactly 2 distinct pairs, 5th die different from both
+      const pairCount = Object.values(counts).filter(v => v === 2).length;
+      const singleCount = Object.values(counts).filter(v => v === 1).length;
       if (pairCount === 2 && singleCount === 1) return sum;
       return 0;
     }
@@ -1159,8 +1215,8 @@ function calculateCategoryScore(cat, diceVals) {
       if (vals.includes(3) && vals.includes(2)) return sum;
       return 0;
     }
-    case 'allOdd': return diceVals.every(v=>v%2===1) ? sum : 0;
-    case 'allEven': return diceVals.every(v=>v%2===0) ? sum : 0;
+    case 'allOdd': return diceVals.every(v => v % 2 === 1) ? sum : 0;
+    case 'allEven': return diceVals.every(v => v % 2 === 0) ? sum : 0;
     default: return 0;
   }
 }
@@ -1169,18 +1225,14 @@ function getQualifyingCategories(diceVals, pid) {
   const fd = gameState.scores[pid].foredeck || {};
   const cp = gameState.scores[pid].cockpit || {};
   const qualifying = [];
-  // Foredeck: qualifies only if score > 0
   FOREDECK_CATS.forEach(cat => {
     if (fd[cat] !== -1) return;
-    const score = calculateCategoryScore(cat, diceVals);
-    if (score > 0) qualifying.push(cat);
+    if (calculateCategoryScore(cat, diceVals) > 0) qualifying.push(cat);
   });
-  // Cockpit: qualifies if score > 0 (Chance always qualifies)
   COCKPIT_CATS.forEach(cat => {
     if (cp[cat] !== -1) return;
     if (cat === 'chance') { qualifying.push(cat); return; }
-    const score = calculateCategoryScore(cat, diceVals);
-    if (score > 0) qualifying.push(cat);
+    if (calculateCategoryScore(cat, diceVals) > 0) qualifying.push(cat);
   });
   return qualifying;
 }
@@ -1191,7 +1243,8 @@ function selectCategory(cat) {
   const scores = gameState.scores[myPlayerId][section] || {};
   if (scores[cat] !== -1 && scores[cat] !== undefined) return;
   selectedCategory = (selectedCategory === cat) ? null : cat;
-  renderScorecard(); renderControls();
+  renderScorecard();
+  renderControls();
 }
 
 function confirmScore() {
@@ -1207,7 +1260,7 @@ function confirmScore() {
   const updates = {};
   updates[`scores/${myPlayerId}/${section}/${selectedCategory}`] = score;
 
-  // Determine bonus
+  // Determine bonus crossoff
   const bonus = determineBonusCrossoff(selectedCategory, section, diceVals, diceMap, myPlayerId, isZero);
   if (bonus) {
     updates['turn/pendingBonus'] = bonus;
@@ -1238,11 +1291,9 @@ function determineBonusCrossoff(cat, section, diceVals, diceMap, pid, isZero) {
     if (isZero && !isFirstZero) return null;
 
     if (isFirstZero) {
-      // First zero: bonus regardless of dice
       return { type: 'foredeck', column: num - 1, anyRow: true };
     }
-
-    // Check foredeck bonus condition
+    // Check condition: player color die (and partner for 3-6) shows this number
     if (cat === 'ones' || cat === 'twos') {
       if (diceMap[pColor] === num) {
         return { type: 'foredeck', column: num - 1, anyRow: true };
@@ -1265,11 +1316,10 @@ function determineBonusCrossoff(cat, section, diceVals, diceMap, pid, isZero) {
     if (isFirstZero) {
       return { type: 'cockpit', row: bonusColor, anyColumn: true };
     }
-
     // Check cockpit bonus conditions
-    const sum = diceVals.reduce((a,b) => a+b, 0);
+    const sum = diceVals.reduce((a, b) => a + b, 0);
     let triggered = false;
-    switch(cat) {
+    switch (cat) {
       case 'blackjack': triggered = diceVals.includes(1); break;
       case 'chance': triggered = sum <= 13; break;
       case 'twoPair': triggered = sum <= 13; break;
@@ -1284,12 +1334,12 @@ function determineBonusCrossoff(cat, section, diceVals, diceMap, pid, isZero) {
 }
 
 // ==========================================
-// COLOR CHART & CROSSOFF
+// CROSSOFF LOGIC
 // ==========================================
 function canSelectThisCrossoff(color, number, isBonusPhase) {
   if (!isMyTurn()) return false;
   const chart = gameState.scores[myPlayerId].colorChart || {};
-  if ((chart[color]||[])[number]) return false;
+  if ((chart[color] || [])[number]) return false;
 
   if (isBonusPhase) {
     const bonus = gameState.turn.pendingBonus;
@@ -1299,7 +1349,6 @@ function canSelectThisCrossoff(color, number, isBonusPhase) {
     return false;
   }
 
-  // Rainbow phase
   return canSelectRainbowCrossoff(color, number);
 }
 
@@ -1309,7 +1358,7 @@ function canSelectRainbowCrossoff(color, number) {
   const diceMap = getDiceMap();
   const diceVals = getDiceValues();
 
-  switch(face) {
+  switch (face) {
     case 'single':
       if (selectedCrossoffs.length >= 1) return false;
       return diceMap[color] === number + 1;
@@ -1318,7 +1367,6 @@ function canSelectRainbowCrossoff(color, number) {
       if (selectedCrossoffs.length >= 1) return false;
       const maxVal = Math.max(...diceVals);
       const minVal = Math.min(...diceVals);
-      // Must match color AND be the highest or lowest value
       if (diceMap[color] !== number + 1) return false;
       return diceMap[color] === maxVal || diceMap[color] === minVal;
     }
@@ -1333,10 +1381,10 @@ function canSelectRainbowCrossoff(color, number) {
       if (selectedCrossoffs.length === 1) {
         return selectedCrossoffs[0].number === number;
       }
-      // First pick: check at least 2 dice show this number
+      // First pick: ensure at least 2 dice show this number
       const targetNum = number + 1;
-      const matchingColors = COLORS.filter(c => diceMap[c] === targetNum);
-      return matchingColors.length >= 2 && matchingColors.includes(color);
+      const matchCount = COLORS.filter(c => diceMap[c] === targetNum).length;
+      return matchCount >= 2;
     }
 
     case 'circle':
@@ -1349,16 +1397,19 @@ function canSelectRainbowCrossoff(color, number) {
 function toggleCrossoff(color, number) {
   if (!isMyTurn()) return;
   const chart = gameState.scores[myPlayerId].colorChart || {};
-  if ((chart[color]||[])[number]) return;
+  if ((chart[color] || [])[number]) return;
 
-  const idx = selectedCrossoffs.findIndex(c => c.color===color && c.number===number);
-  if (idx >= 0) { selectedCrossoffs.splice(idx, 1); }
-  else {
+  const idx = selectedCrossoffs.findIndex(c => c.color === color && c.number === number);
+  if (idx >= 0) {
+    selectedCrossoffs.splice(idx, 1);
+  } else {
     const isBonusPhase = gameState.turn.phase === 'bonus';
     if (!canSelectThisCrossoff(color, number, isBonusPhase)) return;
-    // For bonus phase, only 1 crossoff
-    if (isBonusPhase) selectedCrossoffs = [{ color, number }];
-    else selectedCrossoffs.push({ color, number });
+    if (isBonusPhase) {
+      selectedCrossoffs = [{ color, number }];
+    } else {
+      selectedCrossoffs.push({ color, number });
+    }
   }
   renderColorChart();
 }
@@ -1366,22 +1417,21 @@ function toggleCrossoff(color, number) {
 function confirmCrossoff() {
   if (!isMyTurn() || selectedCrossoffs.length === 0) return;
   const updates = {};
-  selectedCrossoffs.forEach(({color, number}) => {
+  selectedCrossoffs.forEach(({ color, number }) => {
     updates[`scores/${myPlayerId}/colorChart/${color}/${number}`] = true;
   });
 
   if (gameState.turn.phase === 'bonus') {
     updates['turn/pendingBonus'] = null;
     updates['turn/phase'] = 'color';
+    selectedCrossoffs = [];
+    gameRef.update(updates);
   } else {
-    // color phase done
+    // Color phase done — end turn
     selectedCrossoffs = [];
     gameRef.update(updates);
     endTurn();
-    return;
   }
-  selectedCrossoffs = [];
-  gameRef.update(updates);
 }
 
 function skipCrossoff() {
@@ -1395,29 +1445,32 @@ function skipCrossoff() {
 }
 
 function getBonusCrossoffText(bonus) {
-  if (bonus.type === 'foredeck') return `Bonus! Cross off any ${bonus.column+1} on the chart.`;
+  if (bonus.type === 'foredeck') return `Bonus! Cross off any ${bonus.column + 1} on the chart.`;
   if (bonus.type === 'cockpit') return `Bonus! Cross off any number in the ${bonus.row} row.`;
   return 'Bonus crossoff!';
 }
 
 function getRainbowRuleText(face) {
-  switch(face) {
+  switch (face) {
     case 'single': return '🌈 Cross off 1 matching die (color + number)';
     case 'plusminus': return '🌈± Cross off your highest OR lowest rolled die';
     case 'double': return '🌈🌈 Cross off any 2 rolled dice (matching colors)';
-    case 'doubleequal': return '🌈🌈= Cross off 2 dice showing the same number (matching colors)';
+    case 'doubleequal': return '🌈🌈= Cross off 2 dice showing the same number';
     case 'circle': return '⭕ Cross off ANY 1 space — wild!';
     default: return '';
   }
 }
 
 // ==========================================
-// TURNS
+// TURN MANAGEMENT
 // ==========================================
 function endTurn() {
   let nextIndex = gameState.currentTurnIndex + 1;
   let nextRound = gameState.currentRound;
-  if (nextIndex >= gameState.turnOrder.length) { nextIndex = 0; nextRound++; }
+  if (nextIndex >= gameState.turnOrder.length) {
+    nextIndex = 0;
+    nextRound++;
+  }
   gameRef.update({
     currentTurnIndex: nextIndex,
     currentRound: nextRound,
@@ -1433,17 +1486,18 @@ function endTurn() {
 // ==========================================
 function calculateRowScore(row) {
   if (!row) return 0;
-  // Check 6 consecutive (complete row)
-  if (row.every(v => v)) return 40;
-  // Check 5 consecutive
-  for (let s = 0; s <= 1; s++) { if (row.slice(s, s+5).every(v => v)) return 25; }
-  // Check 4 consecutive
-  for (let s = 0; s <= 2; s++) { if (row.slice(s, s+4).every(v => v)) return 20; }
+  if (row.every(v => v)) return 40;       // 6 consecutive = complete row
+  for (let s = 0; s <= 1; s++) {
+    if (row.slice(s, s + 5).every(v => v)) return 25;  // 5 consecutive
+  }
+  for (let s = 0; s <= 2; s++) {
+    if (row.slice(s, s + 4).every(v => v)) return 10;  // 4 consecutive
+  }
   return 0;
 }
 
 function calculateColScore(chart, n) {
-  const count = COLORS.filter(c => (chart[c]||[])[n]).length;
+  const count = COLORS.filter(c => (chart[c] || [])[n]).length;
   if (count >= 5) return 25;
   if (count >= 4) return 10;
   return 0;
@@ -1461,10 +1515,9 @@ function calculateForedeckTotal(pid) {
   const fd = gameState.scores[pid].foredeck || {};
   let sum = 0;
   FOREDECK_CATS.forEach(c => { if (fd[c] > 0) sum += fd[c]; });
-  let bonus = 0;
-  if (sum >= 63) bonus = 35;
-  else if (sum >= 55) bonus = 20;
-  return sum + bonus;
+  if (sum >= 63) return sum + 35;
+  if (sum >= 55) return sum + 20;
+  return sum;
 }
 
 function calculateCockpitTotal(pid) {
@@ -1491,14 +1544,14 @@ function showGameOver() {
     cp: calculateCockpitTotal(pid),
     st: calculateSternScore(pid),
     pid
-  })).sort((a,b) => b.speed - a.speed);
+  })).sort((a, b) => b.speed - a.speed);
 
   const top = results[0].speed;
-  document.getElementById('final-scores').innerHTML = results.map((r,i) => `
-    <div class="final-score-row ${r.speed===top?'winner':''}">
+  document.getElementById('final-scores').innerHTML = results.map((r, i) => `
+    <div class="final-score-row ${r.speed === top ? 'winner' : ''}">
       <div>
-        <span class="final-score-name">${i===0?'🏆 ':''}${r.name}${r.pid===myPlayerId?' (you)':''}</span>
-        <div class="final-score-breakdown">F:${r.fd} C:${r.cp} S:${r.st}</div>
+        <span class="final-score-name">${i === 0 ? '🏆 ' : ''}${r.name}${r.pid === myPlayerId ? ' (you)' : ''}</span>
+        <div class="final-score-breakdown">Foredeck: ${r.fd} | Cockpit: ${r.cp} | Stern: ${r.st}</div>
       </div>
       <span class="final-score-pts">${r.speed} speed</span>
     </div>
@@ -1507,12 +1560,16 @@ function showGameOver() {
 
 function showAbandonConfirm() { showOverlay('abandon-confirm'); }
 function abandonGame() { hideOverlay('abandon-confirm'); returnToLobby(); }
+
 function returnToLobby() {
   gameRef.set({ status: 'lobby', players: {} });
   hideOverlay('game-over');
   showScreen('lobby-screen');
-  showEl('join-section'); hideEl('joined-section');
-  viewingPlayer = null; selectedCategory = null; selectedCrossoffs = [];
+  showEl('join-section');
+  hideEl('joined-section');
+  viewingPlayer = null;
+  selectedCategory = null;
+  selectedCrossoffs = [];
 }
 </script>
 </body>
